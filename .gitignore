@@ -1,0 +1,12 @@
+# Intellij
+.idea/
+
+# NodeJS
+node_modules/
+npm-debug.log
+
+# Build folder
+static/
+
+# Mac
+.DS_Store

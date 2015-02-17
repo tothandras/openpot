@@ -1,0 +1,27 @@
+{
+  "name": "go-ng-chat",
+  "version": "0.1.0",
+  "license": "MIT",
+  "dependencies": {
+    "angular": "~1.3.13",
+    "angular-ui-router": "~0.2.13",
+    "components-font-awesome": "~4.3.0",
+    "angular-mocks": "~1.3.13"
+  },
+  "overrides": {
+    "angular": {
+      "main": "angular.min.js"
+    },
+    "angular-ui-router": {
+      "main": "release/angular-ui-router.min.js"
+    },
+    "components-font-awesome": {
+      "main": [
+        "fonts/fontawesome-webfont.eot",
+        "fonts/fontawesome-webfont.woff",
+        "fonts/fontawesome-webfont.ttf",
+        "fonts/fontawesome-webfont.svg"
+      ]
+    }
+  }
+}

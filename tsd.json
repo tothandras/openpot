@@ -1,0 +1,24 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "client/typings",
+  "bundle": "client/typings/tsd.d.ts",
+  "installed": {
+    "angularjs/angular.d.ts": {
+      "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    },
+    "angularjs/angular-mocks.d.ts": {
+      "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    },
+    "angularjs/angular-animate.d.ts": {
+      "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    },
+    "jasmine/jasmine.d.ts": {
+      "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    }
+  }
+}
