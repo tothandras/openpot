@@ -19,6 +19,12 @@
     },
     "jasmine/jasmine.d.ts": {
       "commit": "ee60c40a96e5ae685c64d8903b6c8fb71f8a3c5f"
+    },
+    "angular-ui/angular-ui-router.d.ts": {
+      "commit": "49b821f06b711a86be349c4bbff4351467c024b9"
+    },
+    "angular-local-storage/angular-local-storage.d.ts": {
+      "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
     }
   }
 }

@@ -1,10 +1,3 @@
-/* TODO
-*   gulp-plumber
-*   karma!!
-*   watch
-*   minify images
-*   copy fonts
-*/
 var gulp = require('gulp');
 
 /** gulp plugins & dependencies */
@@ -22,48 +15,54 @@ var p = require('gulp-load-plugins')({
 // --release
 var IS_RELEASE_BUILD = p.util.env.release != null;
 // --watch
-var KARMA_WATCH = p.util.env.watch != null;
+var WATCH = p.util.env.watch != null;
 // --browsers=Chrome
 var KARMA_BROWSERS = p.util.env.browsers ?
-    p.util.env.browsers.trim().split(',') : ['PhantomJS']
+    p.util.env.browsers.trim().split(',') : ['PhantomJS'];
 
 if (IS_RELEASE_BUILD) {
     console.log(p.util.colors.red('Building release version...'));
 }
 
-/** configuration */
-var config = {
-    banner:
-        '/**\n' +
-        '*\t@author Andras Toth <andras.toth93@gmail.com>\n' +
-        '*\t@url https://github.com/tothandras/go-ng-chat\n' +
-        '*\t@license MIT\n' +
-        '*/\n',
-    paths: {
-        client: 'client',
-        build: 'static',
-        script: 'script',
-        style: 'style',
-        font: 'font'
-    },
-    files: {
-        index: 'src/index.html',
-        template: 'src/**/*.tpl.html',
-        typescript: [
-            'typings/**/*.d.ts',
-            'src/**/*!(test).ts',
-        ],
-        test: 'src/**/*.test.ts',
-        sass: 'src/**/*.scss'
-    },
-    karma: {
-        action: 'run',
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: !KARMA_WATCH,
-        autoWatch: KARMA_WATCH,
-        browsers: KARMA_BROWSERS
-    }
+if (WATCH) {
+    console.log(p.util.colors.green('Watching file changes...'));
 }
+
+/** configuration */
+var config = {};
+config.banner =
+    '/**\n' +
+    '*\t@author Andras Toth <andras.toth93@gmail.com>\n' +
+    '*\t@url https://github.com/tothandras/openpot\n' +
+    '*\t@license MIT\n' +
+    '*/\n';
+config.paths = {
+    client: 'client',
+    build: 'static',
+    script: 'script',
+    style: 'style',
+    font: 'fonts'
+};
+config.files = {
+    index: config.paths.client + '/' + 'src/index.html',
+    template: config.paths.client + '/' + 'src/**/*.tpl.html',
+    typescript: {
+        src: [
+            config.paths.client + '/' + 'src/**/*.module.ts',
+            config.paths.client + '/' + 'src/**/!(*.test).ts'
+        ],
+        typings: [config.paths.client + '/' + 'typings/**/*.d.ts'],
+        test: [config.paths.client + '/' + 'src/**/*.test.ts']
+    },
+    sass: config.paths.client + '/' + 'src/**/*.scss'
+};
+config.karma = {
+    action: 'run',
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: !WATCH,
+    autoWatch: WATCH,
+    browsers: KARMA_BROWSERS
+};
 
 /** tasks */
 gulp.task('clean', function() {
@@ -75,37 +74,29 @@ gulp.task('clean', function() {
 });
 
 gulp.task('lint-ts', function() {
-    return gulp.src(config.files.typescript, {cwd: config.paths.client})
+    var tsFiles = config.files.typescript.src
+        .concat(config.files.typescript.test);
+
+    gulp.src(tsFiles)
+        .pipe(p.plumber())
         .pipe(p.tslint())
-        .pipe(p.tslint.report('verbose', {
-            emitError: false
-        }));
+        .pipe(p.tslint.report('full'));
 });
 
-////////////////////////////////////////////////////////////////////////////////
-//  Build tasks
-////////////////////////////////////////////////////////////////////////////////
+gulp.task('build-ts', ['lint-ts'], function() {
+    var tsFiles = config.files.typescript.src
+        .concat(config.files.typescript.typings);
 
-var tsProject;
-gulp.task('build-script', ['lint-ts'], function() {
+    var tsConfig = {
+        noExternalResolve: true,
+        sortOutput: true,
+        target: 'ES5'
+    };
 
-    // typescript
-    if (tsProject == null) {
-        tsProject = p.typescript.createProject({
-            noExternalResolve: true,
-            sortOutput: true,
-            target: 'ES5'
-        });
-    }
-    var tsFiles = config.files.typescript;
-    // remove test files
-    if (!IS_RELEASE_BUILD) {
-        tsFiles = tsFiles.concat(config.files.test);
-    }
-
-    var ts = gulp.src(tsFiles, {cwd: config.paths.client})
+    var ts = gulp.src(tsFiles)
+        .pipe(p.plumber())
         .pipe(p.sourcemaps.init())
-        .pipe(p.typescript(tsProject));
+        .pipe(p.typescript(tsConfig));
 
     // config
     var cfg = p.ngConstant({
@@ -117,7 +108,8 @@ gulp.task('build-script', ['lint-ts'], function() {
         });
 
     // template
-    var tpl = gulp.src(config.files.template, {cwd: config.paths.client})
+    var tpl = gulp.src(config.files.template)
+        .pipe(p.plumber())
         .pipe(p.rename({
             dirname: ''
         }))
@@ -126,7 +118,19 @@ gulp.task('build-script', ['lint-ts'], function() {
             standalone: true
         }));
 
+    // test files
+    if (!IS_RELEASE_BUILD) {
+        var tsTestFiles = config.files.typescript.test
+            .concat(config.files.typescript.typings);
+        gulp.src(tsTestFiles)
+            .pipe(p.plumber())
+            .pipe(p.typescript(tsConfig))
+            .pipe(p.concat('tests.js'))
+            .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}));
+    }
+
     return p.mergeStream(ts.js, cfg, tpl)
+        .pipe(p.plumber())
         .pipe(p.concat('scripts.js'))
         .pipe(IS_RELEASE_BUILD ? p.ngAnnotate({
             single_quotes: true
@@ -134,17 +138,21 @@ gulp.task('build-script', ['lint-ts'], function() {
         .pipe(IS_RELEASE_BUILD ? p.uglify() : p.util.noop())
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
-        .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}));
+        .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}))
+        .pipe(p.livereload());
 });
 
 gulp.task('build-lib', function() {
-    var js = gulp.src(p.mainBowerFiles())
+    var bowerFiles = gulp.src(p.mainBowerFiles({
+        env: IS_RELEASE_BUILD ? 'production' : 'development'
+    }));
+    var js = bowerFiles
         .pipe(p.filter('*.js'));
 
-    var css = gulp.src(p.mainBowerFiles())
+    var css = bowerFiles
         .pipe(p.filter('*.css'));
 
-    var font = gulp.src(p.mainBowerFiles())
+    var font = bowerFiles
         .pipe(p.filter([
             '*.eot',
             '*.svg',
@@ -167,11 +175,13 @@ gulp.task('build-lib', function() {
     font
         .pipe(gulp.dest(config.paths.font, {cwd: config.paths.build}));
 
-    return p.mergeStream(js, css, font);
+    return p.mergeStream(js, css, font)
+        .pipe(p.livereload());
 });
 
 gulp.task('build-sass', function() {
-    return gulp.src(config.files.sass, {cwd: config.paths.client})
+    return gulp.src(config.files.sass)
+        .pipe(p.plumber())
         .pipe(p.sourcemaps.init())
         .pipe(p.sass({
             outputStyle: IS_RELEASE_BUILD ? 'compressed' : 'compact',
@@ -186,28 +196,40 @@ gulp.task('build-sass', function() {
         .pipe(p.concat('styles.css'))
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
-        .pipe(gulp.dest(config.paths.style, {cwd: config.paths.build}));
+        .pipe(gulp.dest(config.paths.style, {cwd: config.paths.build}))
+        .pipe(p.livereload());
 });
 
-gulp.task('build-index', ['build-script', 'build-sass', 'build-lib'], function() {
+gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function() {
     var files = gulp.src([
         '**/lib*.js',
         '**/scripts*.js',
         '**/*.css'
     ], {cwd: config.paths.build, read: false});
-    return gulp.src(config.files.index, {cwd: config.paths.client})
+    return gulp.src(config.files.index)
         .pipe(p.inject(files, {addRootSlash: false}))
-        .pipe(gulp.dest(config.paths.build));
+        .pipe(gulp.dest(config.paths.build))
+        .pipe(p.livereload());
 });
 
-gulp.task('build', ['build-script', 'build-sass', 'build-lib', 'build-index'])
+gulp.task('build', ['build-ts', 'build-sass', 'build-lib', 'build-index']);
 
-////////////////////////////////////////////////////////////////////////////////
-//  Unit and end-to-end test tasks
-////////////////////////////////////////////////////////////////////////////////
-
-gulp.task('test-karma', ['build-script', 'build-lib'], function(done){
-    p.karma.server.start(config.karma, done);
+gulp.task('watch', function() {
+    if (WATCH) {
+        p.livereload.listen({start: true, quiet: true});
+        gulp.watch(config.files.typescript.src, ['build-ts']);
+        gulp.watch(config.files.typescript.test, ['build-ts']);
+        gulp.watch(config.files.template, ['build-ts']);
+        gulp.watch(config.files.index, ['build-index']);
+        gulp.watch(config.files.sass, ['build-sass']);
+        gulp.watch(config.paths.client + '/lib/**', ['build-lib']);
+    }
 });
 
-gulp.task('default', ['clean', 'build'])
+gulp.task('test-karma', ['build-ts', 'build-lib'], function(done){
+    if (!IS_RELEASE_BUILD) {
+        p.karma.server.start(config.karma, done);
+    }
+});
+
+gulp.task('default', ['clean', 'build', 'watch', 'test-karma']);
