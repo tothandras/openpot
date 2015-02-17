@@ -4,7 +4,8 @@ module.exports = function(config) {
     frameworks: ['jasmine'],
     files: [
       '**/libs.js',
-      '**/scripts.js'
+      '**/scripts.js',
+      '**/tests.js'
     ],
 
     port: 9876,
@@ -14,7 +15,7 @@ module.exports = function(config) {
     // Continuous Integration mode
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
-    singleRun: false,
+    singleRun: true,
 
     // Start these browsers, currently available:
     // - Chrome
@@ -24,6 +25,6 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Chrome']
+    browsers: ['PhantomJS']
   });
 };
