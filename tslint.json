@@ -3,8 +3,7 @@
     "ban": false,
     "class-name": true,
     "comment-format": [true,
-        "check-space",
-        "check-lowercase"
+        "check-space"
     ],
     "curly": true,
     "eofline": true,
@@ -46,10 +45,8 @@
     "quotemark": [true, "single"],
     "radix": true,
     "typedef": [true,
-        "call-signature",
         "parameter",
         "property-declaration",
-        "variable-declaration",
         "member-variable-declaration"
     ],
     "typedef-whitespace": [true, {
