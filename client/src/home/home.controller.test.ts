@@ -5,7 +5,7 @@ module op.home {
         module('op.home');
     });
 
-    describe('op.home.HomeController',(): void => {
+    describe('op.home.HomeController', (): void => {
         var createController: Function;
         var scope: any;
 
@@ -22,7 +22,7 @@ module op.home {
 
         beforeEach(inject(injected));
 
-        it('should be defined',(): void => {
+        it('should be defined', () => {
             createController();
             expect(scope.home).toBeDefined();
         });

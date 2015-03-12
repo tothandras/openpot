@@ -74,7 +74,10 @@ gulp.task('clean', function() {
 });
 
 gulp.task('lint-ts', function() {
-    gulp.src(config.files.typescript.src)
+    var tsFiles = config.files.typescript.src
+        .concat(config.files.typescript.test);
+
+    gulp.src(tsFiles)
         .pipe(p.plumber())
         .pipe(p.tslint())
         .pipe(p.tslint.report('full'));
@@ -84,14 +87,16 @@ gulp.task('build-ts', ['lint-ts'], function() {
     var tsFiles = config.files.typescript.src
         .concat(config.files.typescript.typings);
 
+    var tsConfig = {
+        noExternalResolve: true,
+        sortOutput: true,
+        target: 'ES5'
+    };
+
     var ts = gulp.src(tsFiles)
         .pipe(p.plumber())
         .pipe(p.sourcemaps.init())
-        .pipe(p.typescript({
-            noExternalResolve: true,
-            sortOutput: true,
-            target: 'ES5'
-        }));
+        .pipe(p.typescript(tsConfig));
 
     // config
     var cfg = p.ngConstant({
@@ -119,11 +124,7 @@ gulp.task('build-ts', ['lint-ts'], function() {
             .concat(config.files.typescript.typings);
         gulp.src(tsTestFiles)
             .pipe(p.plumber())
-            .pipe(p.typescript({
-                noExternalResolve: true,
-                sortOutput: true,
-                target: 'ES5'
-            }))
+            .pipe(p.typescript(tsConfig))
             .pipe(p.concat('tests.js'))
             .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}));
     }
@@ -226,7 +227,9 @@ gulp.task('watch', function() {
 });
 
 gulp.task('test-karma', ['build-ts', 'build-lib'], function(done){
-    p.karma.server.start(config.karma, done);
+    if (!IS_RELEASE_BUILD) {
+        p.karma.server.start(config.karma, done);
+    }
 });
 
 gulp.task('default', ['clean', 'build', 'watch', 'test-karma']);

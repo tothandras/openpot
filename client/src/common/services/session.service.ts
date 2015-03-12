@@ -10,10 +10,11 @@ module op.common {
     export interface ISessionService {
         user: IUser;
 
-        getToken: () => Token;
-        getUsername: () => string;
+        getName: () => string;
+        getToken: () => string;
         isAdmin: () => boolean;
-        setUserData: (token: Token, name: string, admin: boolean) => void;
+        setUserData: (token: string, name: string, admin: boolean) => void;
+        deleteUser: () => void;
     }
 
     class SessionService implements ISessionService {
@@ -24,26 +25,32 @@ module op.common {
 
         }
 
-        getToken(): Token {
-            return this.user.token;
+        getName(): string {
+            var user: IUser = this.localStorageService.get('user');
+            return user ? user.name : null;
         }
 
-        getUsername(): string {
-            return this.user.name;
+        getToken(): string {
+            var user: IUser = this.localStorageService.get('user');
+            return user ? user.token : null;
         }
 
         isAdmin(): boolean {
-            return this.user.admin;
+            var user: IUser = this.localStorageService.get('user');
+            return user ? user.admin : null;
         }
 
-        setUserData(token: Token, name: string, admin: boolean): void {
-            this.user.token = token;
-            this.user.name = name;
-            this.user.admin = admin;
+        setUserData(name: string, token: string, admin: boolean = false): void {
+            var user: IUser = {
+                name: name,
+                token: token,
+                admin: admin
+            };
+            this.localStorageService.set('user', user);
         }
 
-        deleteToken(): void {
-            this.localStorageService.remove('token')
+        deleteUser(): void {
+            this.localStorageService.remove('user');
         }
     }
 

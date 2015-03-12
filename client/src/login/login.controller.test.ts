@@ -5,7 +5,7 @@ module op.login {
         module('op.login');
     });
 
-    describe('op.login.LoginController',(): void => {
+    describe('op.login.LoginController', () => {
         var createController: Function;
         var scope: any;
 
@@ -22,7 +22,7 @@ module op.login {
 
         beforeEach(inject(injected));
 
-        it('should be defined',(): void => {
+        it('should be defined', () => {
             createController();
             expect(scope.login).toBeDefined();
         });
