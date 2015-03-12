@@ -7,7 +7,12 @@ module op.home {
               url: '/',
               templateUrl: 'home.tpl.html',
               controller: 'HomeController',
-              controllerAs: 'home'
+              controllerAs: 'home',
+              data: {
+                  onMenu: true,
+                  caption: 'Home',
+                  icon: null // TODO
+              }
         });
     }
 

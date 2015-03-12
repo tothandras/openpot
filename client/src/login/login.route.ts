@@ -7,7 +7,10 @@ module op.login {
               url: '/login',
               templateUrl: 'login.tpl.html',
               controller: 'LoginController',
-              controllerAs: 'login'
+              controllerAs: 'login',
+              data: {
+                  onMenu: false
+              }
         });
     }
 

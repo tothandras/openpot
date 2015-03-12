@@ -1,0 +1,15 @@
+<div class="menu">
+    {{ ::menu.name }}
+    <button class="menu-toggle" ng-click="menu.toggle()">Button</button>
+    <div class="menu-header"></div>
+    <div class="menu-body">
+        <ul class="menu-items">
+            <li class="menu-item" ng-repeat="item in ::menu.items">
+                <a sref="{{ item.sref }}">
+                    {{ item.caption }}
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="menu-footer"></div>
+</div>
