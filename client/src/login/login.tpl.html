@@ -3,5 +3,6 @@
     <input type="text" ng-model='login.username'>
     password:
     <input type="text" ng-model='login.password'>
-    <a ng-click='login.login()'>Login</a>
+    <a ng-if='!login.loggedIn' ng-click='login.login()'>Login</a>
+    <a ng-if='login.loggedIn' ng-click='login.logout()'>Logout</a>
 </div>
