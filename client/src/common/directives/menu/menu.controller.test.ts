@@ -5,7 +5,7 @@ module op.common {
         module('op.common');
     });
 
-    describe('op.common.MenuController',(): void => {
+    describe('op.common.MenuController', (): void => {
         var createController: Function;
         var scope: any;
 
@@ -22,7 +22,7 @@ module op.common {
 
         beforeEach(inject(injected));
 
-        it('should be defined',(): void => {
+        it('should be defined', (): void => {
             createController();
             expect(scope.menu).toBeDefined();
         });

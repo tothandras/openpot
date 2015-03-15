@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -16,10 +17,12 @@ import (
 var (
 	privateKey []byte
 	publicKey  []byte
+	port       = flag.String("port", "80", "port number")
 )
 
 func init() {
 	privateKey, _ = ioutil.ReadFile("keys/app.rsa")
+	flag.Parse()
 	// publicKey, _ := ioutil.ReadFile("keys/app.rsa.pub")
 }
 
@@ -89,5 +92,6 @@ func main() {
 	http.HandleFunc("/api", api)
 	http.HandleFunc("/", fileHandler)
 
-	log.Fatal(http.ListenAndServe("0.0.0.0:8080", nil))
+	log.Println("Server is running on port: " + *port)
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+*port, nil))
 }

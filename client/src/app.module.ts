@@ -4,6 +4,7 @@ module op {
     // register chat module
     angular.module('op', [
         /* Core */
+        'ngMaterial',
         /* Generated */
         'template',
         'config',

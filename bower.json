@@ -10,7 +10,8 @@
     "normalize.css": "~3.0.2",
     "angular-socket-io": "~0.7.0",
     "socket.io-client": "~1.3.4",
-    "angular-local-storage": "~0.1.5"
+    "angular-local-storage": "~0.1.5",
+    "angular-material": "~0.8.3"
   },
   "overrides": {
     "angular": {
@@ -31,16 +32,10 @@
         "production": "release/angular-ui-router.min.js"
       }
     },
-    "socket.io-client": {
-      "main": "socket.io.js"
-    },
-    "angular-socket-io": {
-      "dependencies": {
-        "socket.io-client": "*"
-      },
+    "angular-material": {
       "main": {
-        "development": "socket.js",
-        "production": "socket.min.js"
+        "development": ["angular-material.js", "angular-material.css"],
+        "production": ["angular-material.min.js", "angular-material.min.css"]
       }
     },
     "components-font-awesome": {
