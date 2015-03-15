@@ -8,6 +8,7 @@ module op.common {
 
     export interface ILoginService {
         login: (username: string, password: string) => ng.IPromise<string>;
+        logout: () => ng.IPromise<string>;
     }
 
     class LoginService implements ILoginService {
@@ -41,6 +42,14 @@ module op.common {
                 })
                 .error((response: string) => deferred.reject(response));
 
+            return deferred.promise;
+        }
+
+        // TODO
+        logout(): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+            deferred.resolve('TODO');
+            this.SessionService.deleteUser();
             return deferred.promise;
         }
     }
