@@ -16,7 +16,7 @@ module op.common {
         isAdmin: () => boolean;
         setUserData: (token: string, name: string, admin: boolean) => void;
         getUserData: () => IUser;
-        deleteUser: () => void;
+        unsetUser: () => void;
     }
 
     class SessionService implements ISessionService {
@@ -26,11 +26,10 @@ module op.common {
 
         /* @ngInject */
         constructor(
+            public $http: ng.IHttpService,
             public localStorageService: ng.local.storage.ILocalStorageService<IUser>,
             public $rootScope: ng.IRootScopeService) {
-                if (!!this.getUserData()) {
-                    this.$rootScope.$broadcast(this.sessionOpenedEvent);
-                }
+            this.openEvent();
         }
 
         getName(): string {
@@ -55,16 +54,28 @@ module op.common {
                 admin: admin
             };
             this.localStorageService.set(this.key, user);
-            this.$rootScope.$broadcast(this.sessionOpenedEvent);
+            this.openEvent();
         }
 
         getUserData(): IUser {
             return this.localStorageService.get(this.key);
         }
 
-        deleteUser(): void {
+        unsetUser(): void {
             this.localStorageService.remove(this.key);
+            this.closeEvent();
+        }
+
+        openEvent(): void {
+            if (!!this.getUserData) {
+                this.$rootScope.$broadcast(this.sessionOpenedEvent);
+                this.$http.defaults.headers.common.Authorization = 'Bearer ' + this.getToken();
+            }
+        }
+
+        closeEvent(): void {
             this.$rootScope.$broadcast(this.sessionClosedEvent);
+            this.$http.defaults.headers.common.Authorization = null;
         }
     }
 

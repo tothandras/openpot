@@ -6,7 +6,6 @@ module op.common {
         items: IMenuItem[];
         open: boolean;
 
-        toggle: () => void;
         close: () => void;
     }
 
@@ -17,6 +16,7 @@ module op.common {
 
         /* @ngInject */
         constructor(
+            private $mdSidenav: any,
             $rootScope: ng.IRootScopeService,
             MenuService: IMenuService) {
             this.name = 'Menu Controller';
@@ -27,12 +27,8 @@ module op.common {
             });
         }
 
-        toggle() {
-            this.open = !this.open;
-        }
-
         close() {
-            this.open = false;
+            this.$mdSidenav('left').close();
         }
     }
 

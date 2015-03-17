@@ -68,13 +68,19 @@ func createToken(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(json))
 }
 
+// only accessible with a valid token
 func api(w http.ResponseWriter, r *http.Request) {
-	// toker, err := jwt.Parse(r.Header
-	// if err != nil {
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	return
-	// }
-	// fmt.Fprintf(w, "Hello, %q", auth)
+	token, err := jwt.ParseFromRequest(r, func(token *jwt.Token) (interface{}, error) {
+		return privateKey, nil
+	})
+
+	if err == nil && token.Valid {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, token.Claims["username"].(string))
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "Unathorized request")
+	}
 }
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {

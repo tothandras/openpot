@@ -49,7 +49,7 @@ module op.common {
         logout(): ng.IPromise<string> {
             var deferred: ng.IDeferred<string> = this.$q.defer();
             deferred.resolve('TODO');
-            this.SessionService.deleteUser();
+            this.SessionService.unsetUser();
             return deferred.promise;
         }
     }

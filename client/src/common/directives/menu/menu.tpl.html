@@ -1,15 +1,17 @@
 <div class="menu">
-    {{ ::menu.name }}
-    <button class="menu-toggle" ng-click="menu.toggle()">Button</button>
-    <div class="menu-header"></div>
-    <div class="menu-body">
-        <ul class="menu-items">
-            <li class="menu-item" ng-repeat="item in ::menu.items">
-                <a sref="{{ item.sref }}">
+    <md-sidenav md-component-id="left" class="md-sidenav-left">
+        <md-toolbar class="md-default-theme" layout="row">
+            <h1 class="md-toolbar-tools">Menü</h1>
+            <h1 class="md-toolbar-tools" layout="row" layout-align="end center">
+                <i class="fa fa-close" ng-click="menu.close()"></i>
+            </h1>
+        </md-toolbar>
+        <md-content class="md-padding">
+            <div layout="column">
+                <a ng-repeat="item in ::menu.items" class="md-button md-default-theme" ui-sref="{{ item.sref }}">
                     {{ item.caption }}
                 </a>
-            </li>
-        </ul>
-    </div>
-    <div class="menu-footer"></div>
+            </div>
+        </md-content>
+    </md-sidenav>
 </div>

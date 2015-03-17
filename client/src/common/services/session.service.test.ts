@@ -12,7 +12,7 @@ module op.common {
         function injected($injector: ng.auto.IInjectorService): void {
             sessionService = $injector.get('SessionService');
             localStorageService = $injector.get('localStorageService');
-            sessionService.deleteUser();
+            sessionService.unsetUser();
         }
 
         beforeEach(inject(injected));
@@ -23,7 +23,7 @@ module op.common {
             expect(sessionService.getToken).toEqual(jasmine.any(Function));
             expect(sessionService.isAdmin).toEqual(jasmine.any(Function));
             expect(sessionService.setUserData).toEqual(jasmine.any(Function));
-            expect(sessionService.deleteUser).toEqual(jasmine.any(Function));
+            expect(sessionService.unsetUser).toEqual(jasmine.any(Function));
         });
 
         it('should save the token to localStorage', () => {
