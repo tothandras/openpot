@@ -42,6 +42,7 @@ func createToken(w http.ResponseWriter, r *http.Request) {
 	username, password, ok := r.BasicAuth()
 	if !ok || !verify(username, password) {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Bad creditentals")
 		return
 	}
 

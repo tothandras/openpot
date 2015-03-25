@@ -10,7 +10,7 @@ module op.login {
               controllerAs: 'login',
               data: {
                   onMenu: true,
-                  caption: 'Login',
+                  caption: 'Bejelentkezés',
                   icon: null // TODO
               }
         });

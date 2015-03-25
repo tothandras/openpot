@@ -1,5 +1,8 @@
 .toolbar {
-    .fa-bars {
+    md-toolbar {
+        z-index: 62;
+    }
+    .fa {
         cursor: pointer;
         padding-right: 16px;
     }

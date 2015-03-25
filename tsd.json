@@ -25,6 +25,9 @@
     },
     "angular-local-storage/angular-local-storage.d.ts": {
       "commit": "fa20411dd52348e933c2b23b24365236e92fa4ac"
+    },
+    "angular-material/angular-material.d.ts": {
+      "commit": "bba34156c1eaad788fa8996f7d30b54c4fce5ffe"
     }
   }
 }

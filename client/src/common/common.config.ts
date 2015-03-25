@@ -2,17 +2,25 @@ module op.common {
     'use strict';
 
     /* @ngInject */
-    function authInterceptor($rootScope: ng.IRootScopeService) {
+    function authInterceptor(
+        $rootScope: ng.IRootScopeService,
+        EVENT_BAD_CREDITENTALS: string,
+        EVENT_LOGIN_REQUIRED: string,
+        EVENT_AUTH_FORBIDDEN: string) {
         return {
             responseError: function(rejection: any) {
                 switch (rejection.status) {
+                    case 400:
+                        $rootScope.$broadcast(EVENT_BAD_CREDITENTALS, rejection);
+                        break;
                     case 401:
-                        $rootScope.$broadcast('event:auth-loginRequired', rejection);
+                        $rootScope.$broadcast(EVENT_LOGIN_REQUIRED, rejection);
                         break;
                     case 403:
-                        $rootScope.$broadcast('event:auth-forbidden', rejection);
+                        $rootScope.$broadcast(EVENT_AUTH_FORBIDDEN, rejection);
                         break;
                 }
+                return rejection;
             }
         }
     }

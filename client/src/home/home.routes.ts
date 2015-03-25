@@ -10,7 +10,7 @@ module op.home {
               controllerAs: 'home',
               data: {
                   onMenu: true,
-                  caption: 'Home',
+                  caption: 'Főoldal',
                   icon: null // TODO
               }
         });

@@ -5,3 +5,4 @@
 /// <reference path="jasmine/jasmine.d.ts" />
 /// <reference path="jquery/jquery.d.ts" />
 /// <reference path="angular-local-storage/angular-local-storage.d.ts" />
+/// <reference path="angular-material/angular-material.d.ts" />

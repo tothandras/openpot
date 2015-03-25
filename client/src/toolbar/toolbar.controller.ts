@@ -1,40 +1,53 @@
-module op.common {
+module op.toolbar {
     'use strict';
 
     export interface IToolbarScope {
-        openMenu: () => void;
+        loggedIn: boolean;
+        menu: boolean;
+        toggleMenu: () => void;
     }
 
     class ToolbarController implements IToolbarScope {
         loggedIn: boolean = false;
+        menu: boolean = false;
 
         /* @ngInject */
         constructor(
+            public $rootScope: ng.IRootScopeService,
             public $scope: ng.IScope,
+            public $log: ng.ILogService,
             public $mdSidenav: any,
-            public SessionService: op.common.ISessionService) {
+            public SessionService: op.common.ISessionService,
+            public EVENT_OPEN_LOGIN_DIALOG: string) {
                 var self = this;
                 $scope.$on(SessionService.sessionOpenedEvent, () => {
                     $scope.$applyAsync(() => {
                         self.loggedIn = true;
                     });
-                    console.log(self.loggedIn);
+                    $log.debug(self.loggedIn);
                 });
 
                 $scope.$on(SessionService.sessionClosedEvent, () => {
                     $scope.$applyAsync(() => {
                         self.loggedIn = false;
                     });
-                    console.log(self.loggedIn);
+                    $log.debug(self.loggedIn);
                 });
+
+                $rootScope.$on('$stateChangeStart', () => this.menu = false);
         }
 
-        openMenu(): void {
+        toggleMenu(): void {
             this.$mdSidenav('left').toggle();
+            this.menu = !this.menu;
+        }
+
+        openLoginDialog($event: ng.IAngularEvent): void {
+            this.$rootScope.$broadcast(this.EVENT_OPEN_LOGIN_DIALOG, $event);
         }
     }
 
     // register ToolbarController
-    angular.module('op.common')
+    angular.module('op.toolbar')
         .controller('ToolbarController', ToolbarController);
 }

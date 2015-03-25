@@ -5,6 +5,7 @@ module op {
     angular.module('op', [
         /* Core */
         'ngMaterial',
+        'ngMessages',
         /* Generated */
         'template',
         'config',
@@ -12,6 +13,8 @@ module op {
         'op.common',
         'op.home',
         'op.login',
+        'op.register',
+        'op.toolbar',
         /* Third party */
         'ui.router'
     ]);

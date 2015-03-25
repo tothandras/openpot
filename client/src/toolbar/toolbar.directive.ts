@@ -1,4 +1,4 @@
-module op.common {
+module op.toolbar {
     'use strict';
 
     class ToolbarDirective implements ng.IDirective {
@@ -28,6 +28,6 @@ module op.common {
     }
 
     // register Toolbar Directive
-    angular.module('op.common')
+    angular.module('op.toolbar')
         .directive('opToolbar', ToolbarDirective.instance);
 }

@@ -9,6 +9,7 @@ module op.login {
         loggedIn: boolean;
         login: () => void;
         logout: () => void;
+        closeDialog: () => void;
     }
 
     class LoginController implements ILoginScope {
@@ -21,8 +22,11 @@ module op.login {
         /* @ngInject */
         constructor(
             public LoginService: op.common.ILoginService,
+            public $rootScope: ng.IRootScopeService,
             public SessionService: op.common.ISessionService,
-            public $state: ng.ui.IStateService) {
+            public $state: ng.ui.IStateService,
+            public $mdDialog: any,
+            public $log: ng.ILogService) {
             // TODO EVENT!!!
             this.loggedIn = !!SessionService.getUserData();
         }
@@ -30,10 +34,10 @@ module op.login {
         login(): void {
             this.LoginService.login(this.username, this.password)
                 .then((response: any): void => {
-                    console.log(response);
-                    // TODO EVENT!!!
-                    this.loggedIn = !!this.SessionService.getUserData();
-                });
+                this.$log.debug(response);
+                // TODO EVENT!!!
+                this.loggedIn = !!this.SessionService.getUserData();
+            });
         }
 
         logout(): void {
@@ -42,9 +46,18 @@ module op.login {
             if (this.loggedIn) {
                 this.LoginService.logout()
                     .then((response: any): void => {
-                        this.$state.go('home');
-                    });
+                    this.$state.go('home');
+                });
             }
+        }
+
+        closeDialog(): void {
+            this.$mdDialog.hide();
+        }
+
+        loginDialog(): void {
+            this.closeDialog();
+            this.login();
         }
     }
 

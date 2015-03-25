@@ -1,8 +1,8 @@
-module op.common {
+module op.toolbar {
     'use strict';
 
     beforeEach((): void => {
-        module('op.common');
+        module('op.toolbar');
     });
 
     describe('op.common.ToolbarController', (): void => {
