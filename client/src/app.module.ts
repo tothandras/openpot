@@ -15,6 +15,7 @@ module op {
         'op.login',
         'op.register',
         'op.toolbar',
+        'op.user',
         /* Third party */
         'ui.router'
     ]);

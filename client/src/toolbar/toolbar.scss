@@ -1,9 +1,13 @@
 .toolbar {
     md-toolbar {
+        position: absolute;
         z-index: 62;
     }
     .fa {
         cursor: pointer;
         padding-right: 16px;
+    }
+    .name {
+        margin-right: 16px;
     }
 }

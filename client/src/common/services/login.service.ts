@@ -32,7 +32,7 @@ module op.common {
                 headers: {
                     'Authorization': 'Basic ' + auth
                 }
-            }
+            };
             this.$http(requestConfig)
                 .success((response: ITokenObject) => {
                     var token: string = response.token;

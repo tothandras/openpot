@@ -6,7 +6,7 @@ module op.common {
     });
 
     describe('op.common.APIService', () => {
-        var APIService: any;
+        var apiService: any;
         /*var loginService: any;
         var $httpBackend: ng.IHttpBackendService;
         var authRequestHandler: ng.mock.IRequestHandler;
@@ -21,7 +21,7 @@ module op.common {
         };*/
 
         function injected($injector: ng.auto.IInjectorService): void {
-            APIService = $injector.get('APIService');
+            apiService = $injector.get('APIService');
             /*loginService = $injector.get('LoginService');
             $httpBackend = $injector.get('$httpBackend');
 
@@ -39,7 +39,7 @@ module op.common {
         });*/
 
         it('should be defined', () => {
-            expect(APIService).toBeDefined();
+            expect(apiService).toBeDefined();
             /*expect(APIService.login).toEqual(jasmine.any(Function));*/
         });
     });

@@ -20,6 +20,12 @@ var (
 	port       = flag.String("port", "80", "port number")
 )
 
+type UserData struct {
+	Username string `json:"username"`
+	Name     string `json:"name"`
+	Image    string `json:"image"`
+}
+
 func init() {
 	privateKey, _ = ioutil.ReadFile("keys/app.rsa")
 	flag.Parse()
@@ -76,8 +82,19 @@ func api(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err == nil && token.Valid {
+		user := UserData{
+			Username: token.Claims["username"].(string),
+			Name: "Toth Andras", // TODO db
+			Image: "https://avatars2.githubusercontent.com/u/4157749?v=3&s=460", // TODO db
+		}
+		b, err := json.Marshal(user)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "Server error")
+			return
+		}
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, token.Claims["username"].(string))
+		fmt.Fprintf(w, string(b))
 	} else {
 		w.WriteHeader(http.StatusUnauthorized)
 		fmt.Fprintf(w, "Unathorized request")

@@ -9,7 +9,7 @@ module op.login {
               controller: 'LoginController',
               controllerAs: 'login',
               data: {
-                  onMenu: true,
+                  onMenu: false,
                   caption: 'Bejelentkezés',
                   icon: null // TODO
               }

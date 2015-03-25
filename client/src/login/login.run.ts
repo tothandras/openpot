@@ -16,7 +16,7 @@ module op.login {
                 templateUrl: 'loginDialog.tpl.html',
                 controller: 'LoginController as dialog'
             });
-        }
+        };
 
         var showError = function(message: string): void {
             var alert = $mdDialog.alert({
@@ -25,7 +25,7 @@ module op.login {
                 ok: 'Bezárás'
             });
             $mdDialog.show(alert);
-        }
+        };
 
         $rootScope.$on(EVENT_OPEN_LOGIN_DIALOG,
             (e: ng.IAngularEvent, $event: ng.IAngularEvent) => showDialog($event || e));

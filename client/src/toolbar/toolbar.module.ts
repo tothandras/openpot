@@ -3,6 +3,7 @@ module op.toolbar {
 
     // register op.toolbar module
     angular.module('op.toolbar', [
-        'op.login'
+        'op.login',
+        'op.user'
     ]);
 }

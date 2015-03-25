@@ -1,15 +1,22 @@
-@import url('http://fonts.googleapis.com/css?family=Roboto:400',100);
+@import url('http://fonts.googleapis.com/css?family=Roboto:400,100');
 @import '../lib/components-font-awesome/scss/font-awesome.scss';
+
 $green-color: #2ecc71;
 $main-font: 'Roboto';
 
 html, body, .main-content {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: $main-font;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: $main-font;
+}
+
+.content {
+  display: block;
+  height: 100%;
+  padding-top: 64px;
 }
 
 .green-color {
-    color: #d0f8ce;
+  color: #d0f8ce;
 }

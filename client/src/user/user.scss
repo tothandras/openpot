@@ -1,0 +1,50 @@
+.user {
+  height: 100%;
+
+  .row {
+    height: 100%;
+  }
+
+  .info {
+    width: 100%;
+    height: 100%;
+    background-color: #808dd3;
+    text-align: center;
+    padding-top: 50px;
+
+    .img-container {
+      width: 100%;
+      padding-left: 20%;
+      padding-right: 20%;
+    }
+
+    .circle {
+      border-radius: 50%;
+      background-clip: padding-box;
+    }
+
+    .responsive-image {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .name {
+      color: #ffffff;
+      font-weight: 100;
+      font-size: 3em;
+      margin-bottom: 0;
+    }
+
+    .username {
+      color: #ffffff;
+      text-transform: uppercase;
+      font-weight: 100;
+      font-size: 1em;
+      margin-top: 0;
+    }
+  }
+
+  .list {
+    overflow-y: scroll;
+  }
+}

@@ -9,7 +9,7 @@ module op.register {
               controller: 'RegisterController',
               controllerAs: 'register',
               data: {
-                  onMenu: true,
+                  onMenu: false,
                   caption: 'Regisztráció',
                   icon: null // TODO
               }

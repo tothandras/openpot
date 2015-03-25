@@ -1,8 +1,23 @@
 <div class="login">
-    username:
-    <input type="text" ng-model='login.username'>
-    password:
-    <input type="text" ng-model='login.password'>
-    <a ng-if='!login.loggedIn' ng-click='login.login()'>Login</a>
-    <a ng-if='login.loggedIn' ng-click='login.logout()'>Logout</a>
+    <md-content class="md-padding login-form">
+        Bejelentkezés
+        <form name="loginForm" novalidate>
+            <md-input-container>
+                <label>Felhasználónév</label>
+                <input type="text" name="username" ng-model="dialog.username" required>
+                <div ng-messages="loginForm.username.$error" ng-show="loginForm.username.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label>Jelszó</label>
+                <input type="password" name="password" ng-model="dialog.password" required>
+                <div ng-messages="loginForm.password.$error" ng-show="loginForm.password.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                </div>
+            </md-input-container>
+        </form>
+        <md-button class="md-primary" ng-click="dialog.loginDialog()" ng-disabled="loginForm.$invalid">OK</md-button>
+        <md-button ng-click="dialog.closeDialog()">Mégse</md-button>
+    </md-content>
 </div>
