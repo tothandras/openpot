@@ -1,8 +1,7 @@
-module op.login {
+module op.users {
     'use strict';
 
-    // register op.login module
-    angular.module('op.login', [
+    angular.module('op.users', [
         /* Core */
         /* App */
         'op.common',

@@ -2,11 +2,10 @@
     <md-toolbar class="md-default-theme" layout="row">
         <h1 class="md-toolbar-tools">
             <i class="fa fa-bars" ng-click="toolbar.toggleMenu()"/>
-
             <p>OpenPot</p>
+            <p>{{this.user.email}}</p>
         </h1>
         <h1 class="md-toolbar-tools" layout="row" layout-align="end center">
-            <p class="name">{{toolbar.name}}</p>
             <i class="fa fa-user" ng-click="toolbar.openLoginDialog($event)"/>
         </h1>
     </md-toolbar>

@@ -1,23 +1,28 @@
-<div class="login">
-    <md-content class="md-padding login-form">
+<md-dialog class="login">
+    <md-content>
         Bejelentkezés
         <form name="loginForm" novalidate>
             <md-input-container>
-                <label>Felhasználónév</label>
-                <input type="text" name="username" ng-model="dialog.username" required>
-                <div ng-messages="loginForm.username.$error" ng-show="loginForm.username.$dirty">
+                <label for="email">Felhasználónév</label>
+                <input id="email" type="email" name="email" ng-model="dialog.email" required>
+                <div ng-messages="loginForm.email.$error" ng-show="loginForm.email.$dirty">
                     <div ng-message="required">Kötelező megadni!</div>
                 </div>
             </md-input-container>
             <md-input-container>
-                <label>Jelszó</label>
-                <input type="password" name="password" ng-model="dialog.password" required>
+                <label for="password">Jelszó</label>
+                <input id="password" type="password" name="password" ng-model="dialog.password" required>
                 <div ng-messages="loginForm.password.$error" ng-show="loginForm.password.$dirty">
                     <div ng-message="required">Kötelező megadni!</div>
                 </div>
             </md-input-container>
         </form>
-        <md-button class="md-primary" ng-click="dialog.loginDialog()" ng-disabled="loginForm.$invalid">OK</md-button>
-        <md-button ng-click="dialog.closeDialog()">Mégse</md-button>
+        <div class="error-container">
+            <span class="error" ng-show="dialog.error">Helytelen felhasználónév vagy jelszó.</span>
+        </div>
     </md-content>
-</div>
+    <div class="md-actions">
+        <md-button class="md-primary" ng-click="dialog.login()" ng-disabled="loginForm.$invalid">OK</md-button>
+        <md-button ng-click="dialog.closeDialog()">Mégse</md-button>
+    </div>
+</md-dialog>

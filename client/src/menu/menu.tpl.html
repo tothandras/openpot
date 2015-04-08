@@ -1,0 +1,13 @@
+<div class="menu">
+    <md-sidenav md-component-id="left" class="md-sidenav-left">
+        <md-toolbar class="md-default-theme">
+        </md-toolbar>
+        <md-content class="md-padding">
+            <div layout="column">
+                <a ng-repeat="item in ::menu.items" class="md-button md-default-theme" ui-sref="{{ item.sref }}">
+                    {{ item.caption }}
+                </a>
+            </div>
+        </md-content>
+    </md-sidenav>
+</div>

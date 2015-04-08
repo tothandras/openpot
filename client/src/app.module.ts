@@ -1,7 +1,6 @@
 module op {
     'use strict';
 
-    // register chat module
     angular.module('op', [
         /* Core */
         'ngMaterial',
@@ -10,12 +9,12 @@ module op {
         'template',
         'config',
         /* App */
-        'op.common',
+         'op.common',
         'op.home',
-        'op.login',
-        'op.register',
-        'op.toolbar',
-        'op.user',
+        // 'op.login',
+        // 'op.register',
+         'op.toolbar',
+         'op.users',
         /* Third party */
         'ui.router'
     ]);
