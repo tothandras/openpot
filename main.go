@@ -12,6 +12,7 @@ import (
 
 	"github.com/GeertJohan/go.rice"
 	jwt "github.com/dgrijalva/jwt-go"
+  "github.com/julienschmidt/httprouter"
 )
 
 var (
@@ -102,20 +103,31 @@ func api(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fileHandler(w http.ResponseWriter, r *http.Request) {
-	url := r.URL.String()
-	if strings.Contains(url, ".") {
-		url = "/"
-	}
-	box := rice.MustFindBox("static")
-	http.StripPrefix(url, http.FileServer(box.HTTPBox())).ServeHTTP(w, r)
+//func fileHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+//	url := r.URL.String()
+//	if strings.Contains(url, ".") {
+//		url = "/"
+//	}
+//	box := rice.MustFindBox("static")
+//	http.StripPrefix(url, http.FileServer(box.HTTPBox())).ServeHTTP(w, r)
+//}
+
+func handleFiles(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+  box := rice.MustFindBox("static")
+  url := r.URL.String()
+  if strings.Contains(url, ".") {
+  	url = "/"
+  }
+  http.StripPrefix(url, http.FileServer(box.HTTPBox())).ServeHTTP(w, r)
 }
 
 func main() {
+  router := httprouter.New()
 	http.HandleFunc("/auth", createToken)
 	http.HandleFunc("/api", api)
-	http.HandleFunc("/", fileHandler)
+  router.GET("/*filepath", handleFiles)
+//	http.HandleFunc("/", fileHandler)
 
 	log.Println("Server is running on port: " + *port)
-	log.Fatal(http.ListenAndServe("0.0.0.0:"+*port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+*port, router))
 }
