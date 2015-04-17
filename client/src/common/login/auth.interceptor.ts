@@ -20,8 +20,8 @@ module op.common {
         API_URL: string) {
         return {
             request: function(config: ng.IRequestConfig) {
-                var SessionService: ISessionService = $injector.get('SessionService');
-                var token: IToken = SessionService.token;
+                var sessionService: ISessionService = $injector.get('SessionService');
+                var token: IToken = sessionService.token;
                 if (config.url.indexOf(API_URL) === 0 && token) {
                     config.headers.Authorization = 'Bearer ' + token.token;
                 }
