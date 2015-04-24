@@ -235,11 +235,13 @@ gulp.task('test-karma', ['build-ts', 'build-lib'], function(done){
 });
 
 gulp.task('browser-sync', function() {
-    browserSync({
-        notify: false,
-        open: false,
-        proxy: 'localhost:' + config.port
-    });
+    if (WATCH) {
+        browserSync({
+            notify: false,
+            open: false,
+            proxy: 'localhost:' + config.port
+        });
+    }
 });
 
 gulp.task('default', ['clean', 'build', 'watch', 'test-karma', 'browser-sync']);
