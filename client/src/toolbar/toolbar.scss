@@ -27,6 +27,7 @@
         font-size: 1em;
         overflow: hidden;
         transition: top ease-in-out 0.6s;
+        z-index: 60;
 
         ul {
             list-style: none;

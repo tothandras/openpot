@@ -14,6 +14,10 @@
 
     .list {
         overflow-y: scroll;
+
+        .pot {
+            padding-left: 50px;
+        }
     }
 
     ui-gmap-google-map, .angular-google-map, .angular-google-map-container {

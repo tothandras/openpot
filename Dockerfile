@@ -2,7 +2,7 @@ FROM centos:latest
 MAINTAINER Andras Toth <andras.toth93@gmail.com>
 
 RUN yum update -y
-RUN yum install -y curl tar git hg gcc libc6-dev make openssh-client
+RUN yum install -y curl tar git hg gcc libc6-dev make openssl
 
 ENV GOLANG_VERSION 1.4.2
 
@@ -21,6 +21,7 @@ ADD . /go/src/github.com/tothandras/openpot
 RUN go get -v -d all
 RUN go install github.com/tothandras/openpot
 RUN mkdir /keys -p
-RUN ssh-keygen -q -t rsa -N '' -f /keys/app.rsa
+RUN openssl genrsa -out /keys/app.rsa 1024
+RUN openssl rsa -pubout -in /keys/app.rsa -out /keys/app.rsa.pub
 ENTRYPOINT openpot -port=8080 -db=172.17.0.70
 EXPOSE 8080

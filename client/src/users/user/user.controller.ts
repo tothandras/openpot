@@ -68,6 +68,7 @@ module op.users {
 
         goToList(): void {
             this.$state.transitionTo('user.list');
+            this.getPots(this.data.id);
         }
 
         newPot(): void {
