@@ -2,8 +2,8 @@ module op.login {
     'use strict';
 
     export interface ILoginDialogService {
-        showDialog: ($event: ng.IAngularEvent) => void;
-        closeDialog: () => void;
+        showDialog: ($event: ng.IAngularEvent) => ng.IPromise<any>;
+        closeDialog: () => ng.IPromise<any>;
     }
 
     class LoginDialogService implements ILoginDialogService {
@@ -13,8 +13,8 @@ module op.login {
 
         }
 
-        showDialog($event: ng.IAngularEvent): void {
-            this.$mdDialog.show({
+        showDialog($event: ng.IAngularEvent): ng.IPromise<any> {
+            return this.$mdDialog.show({
                 parent: angular.element(document.body),
                 targetEvent: $event,
                 templateUrl: 'login.tpl.html',
@@ -22,8 +22,8 @@ module op.login {
             });
         }
 
-        closeDialog(): void {
-            this.$mdDialog.hide();
+        closeDialog(): ng.IPromise<any> {
+            return this.$mdDialog.hide();
         }
     }
 

@@ -16,7 +16,7 @@ module op.login {
         error: string;
 
         /* @ngInject */
-        constructor(public LoginService: op.common.ILoginService,
+        constructor(public AuthService: op.common.IAuthService,
                     public SessionService: op.common.ISessionService,
                     public $state: ng.ui.IStateService,
                     public LoginDialogService: ILoginDialogService,
@@ -26,7 +26,7 @@ module op.login {
 
         login(): void {
             this.error = null;
-            this.LoginService.login(this.email, this.password).then((response: any): void => {
+            this.AuthService.login(this.email, this.password).then((response: any): void => {
                 this.$log.debug(response);
                 this.LoginDialogService.closeDialog();
             }, (error: any): void => {
@@ -35,11 +35,10 @@ module op.login {
         }
 
         logout(): void {
-            if (this.SessionService.loggedIn) {
-                this.LoginService.logout().then((response: any): void => {
-                    this.LoginDialogService.closeDialog();
-                    this.$state.go('home');
-                });
+            if (this.SessionService.loggedIn()) {
+                this.AuthService.logout();
+                this.LoginDialogService.closeDialog();
+                this.$state.go('home');
             }
         }
 

@@ -3,47 +3,52 @@ module op.common {
 
     export interface ISessionService {
         setUser: (token: IToken) => void;
-        getUser: () => IUser;
+        getUser: () => ng.IPromise<IUser>;
         unsetUser: () => void;
         loggedIn: () => boolean;
-        token: IToken;
+        tokenObject: IToken;
     }
 
     class SessionService implements ISessionService {
         key: string = 'user';
-        token: IToken;
+        tokenObject: IToken;
 
         /* @ngInject */
-        constructor(public localStorageService: ng.local.storage.ILocalStorageService<IToken>,
+        constructor(public $q: ng.IQService,
+                    public localStorageService: ng.local.storage.ILocalStorageService<IToken>,
                     public APIService: IAPIService,
                     public user: IUser) {
-            this.token = localStorageService.get(this.key);
-            if (this.token && this.token.id) {
-                APIService.getUserData(this.token.id).then((u: IUser) => {
-                    user = u;
-                });
+            this.tokenObject = localStorageService.get(this.key);
+            if (this.tokenObject && this.tokenObject.token) {
+                if (this.tokenObject.user) {
+                    user.setUser(this.tokenObject.user);
+                } else {
+                    APIService.getUserData(this.tokenObject.token).then((u: IUser) => {
+                        user.setUser(u);
+                    });
+                }
             }
         }
 
         setUser(token: IToken): void {
-            this.token = token;
+            this.tokenObject = token;
             this.localStorageService.set(this.key, token);
-            this.APIService.getUserData(this.token.id).then((u: IUser) => {
-                this.user = u;
-            });
+            this.user.setUser(token.user);
         }
 
-        getUser(): IUser {
-            return this.user;
+        getUser(): ng.IPromise<IUser> {
+            var deferred: ng.IDeferred<IUser> = this.$q.defer();
+            deferred.resolve(this.user);
+            return deferred.promise;
         }
 
         unsetUser(): void {
             this.localStorageService.remove(this.key);
-            this.user = null;
+            this.user.unsetUser();
         }
 
         loggedIn(): boolean {
-            return !!this.user;
+            return !!this.user.email;
         }
     }
 

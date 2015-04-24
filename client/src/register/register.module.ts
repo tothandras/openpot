@@ -1,12 +1,12 @@
-module op.users {
+module op.register {
     'use strict';
 
-    angular.module('op.users', [
+    // register op.login module
+    angular.module('op.register', [
         /* Core */
         /* App */
         'op.common',
         /* Third party */
-        'ui.router',
-        'angular-md5'
+        'ui.router'
     ]);
 }

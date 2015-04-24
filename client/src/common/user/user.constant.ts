@@ -2,19 +2,16 @@ module op.common {
     'use strict';
 
     export interface IToken {
-        id: string;
-        email: string;
+        user: IUser;
         token: string;
     }
 
     export class Token implements IToken {
-        id: string;
-        email: string;
+        user: IUser;
         token: string;
 
-        constructor(id: string, email: string, token: string) {
-            this.id = id;
-            this.email = email;
+        constructor(user: IUser, token: string) {
+            this.user = user;
             this.token = token;
         }
     }
@@ -24,9 +21,14 @@ module op.common {
         email: string;
         firstName: string;
         lastName: string;
-        imageURL: string;
-        //location: string;
         description: string;
+        phone: string;
+        stars: number;
+        following: string[];
+        image: string;
+
+        setUser: (obj?: any) => void;
+        unsetUser: () => void;
     }
 
     export class User implements IUser {
@@ -34,19 +36,36 @@ module op.common {
         email: string;
         firstName: string;
         lastName: string;
-        imageURL: string;
-        //location: string;
         description: string;
+        phone: string;
+        stars: number;
+        following: string[];
+        image: string;
 
         constructor(obj?: any) {
+            this.setUser(obj);
+        }
+
+        setUser(obj?: any): void {
             this.id = obj && obj.id || '';
             this.email = obj && obj.email || '';
             this.firstName = obj && obj.firstName || '';
             this.lastName = obj && obj.lastName || '';
-            this.imageURL = obj && obj.imageURL || '';
-            //this.location = obj && obj.location || '';
             this.description = obj && obj.description || '';
+            this.phone = obj && obj.phone || '';
+            this.stars = obj && obj.stars || 1;
+            this.following = obj && obj.stars || [];
         }
+
+        unsetUser(): void {
+            this.id = this.email = this.firstName = this.lastName = this.description = this.phone = this.image = '';
+            this.stars = 1;
+            this.following = [];
+        }
+    }
+
+    export class RegisterUser extends User {
+        password: string;
     }
 
     angular.module('op.common')

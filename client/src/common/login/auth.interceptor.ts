@@ -21,29 +21,30 @@ module op.common {
         return {
             request: function(config: ng.IRequestConfig) {
                 var sessionService: ISessionService = $injector.get('SessionService');
-                var token: IToken = sessionService.token;
-                if (config.url.indexOf(API_URL) === 0 && token) {
-                    config.headers.Authorization = 'Bearer ' + token.token;
+                var tokenObject: IToken = sessionService.tokenObject;
+                if (config.url.indexOf(API_URL) === 0 && tokenObject) {
+                    config.headers.Authorization = 'Bearer ' + tokenObject.token;
                 }
                 return config;
-            },
-            response: function(response: any) {
-                return response;
-            },
-            responseError: function(rejection: any) {
-                switch (rejection.status) {
-                    case 400:
-                        $rootScope.$broadcast(EVENT_BAD_CREDENTIALS, rejection);
-                        break;
-                    case 401:
-                        $rootScope.$broadcast(EVENT_LOGIN_REQUIRED, rejection);
-                        break;
-                    case 403:
-                        $rootScope.$broadcast(EVENT_AUTH_FORBIDDEN, rejection);
-                        break;
-                }
-                return rejection;
             }
+            //,
+            //response: function(response: any) {
+            //    return response;
+            //},
+            //responseError: function(rejection: any) {
+            //    switch (rejection.status) {
+            //        case 400:
+            //            $rootScope.$broadcast(EVENT_BAD_CREDENTIALS, rejection);
+            //            break;
+            //        case 401:
+            //            $rootScope.$broadcast(EVENT_LOGIN_REQUIRED, rejection);
+            //            break;
+            //        case 403:
+            //            $rootScope.$broadcast(EVENT_AUTH_FORBIDDEN, rejection);
+            //            break;
+            //    }
+            //    return rejection;
+            //}
         }
     }
 

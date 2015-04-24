@@ -9,12 +9,11 @@ module op {
         'template',
         'config',
         /* App */
-         'op.common',
+        'op.common',
         'op.home',
-        // 'op.login',
-        // 'op.register',
-         'op.toolbar',
-         'op.users',
+        'op.pots',
+        'op.toolbar',
+        'op.users',
         /* Third party */
         'ui.router'
     ]);

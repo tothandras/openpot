@@ -3,12 +3,9 @@ module op.users {
 
     /* @ngInject */
     function config($stateProvider: ng.ui.IStateProvider): void {
-        $stateProvider.state('user', {
-            url: '/user/:id',
-            abstract: true,
-            templateUrl: 'user.tpl.html',
-            controller: 'UserController',
-            controllerAs: 'user',
+        $stateProvider.state('user.list', {
+            url: '',
+            templateUrl: 'user.list.tpl.html',
             resolve: {
             },
             data: {

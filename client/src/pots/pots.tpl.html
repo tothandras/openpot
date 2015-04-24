@@ -1,0 +1,34 @@
+<div class="pots">
+    <div layout="row" class="row">
+        <div flex="35" class="info">
+            <ui-gmap-google-map options="pots.map.options" center='pots.map.center' zoom='pots.map.zoom'></ui-gmap-google-map>
+        </div>
+        <div ng-if="pots.pots.length === 0" class="no-pots" layout="row" layout-align="center center">
+            <h1>
+                Jelenleg egy szaftos fazék sincs a környéken.
+                <br/>
+                <span>Nézz vissza később!</span>
+            </h1>
+        </div>
+        <div flex class="list">
+            <md-content>
+                <p>TODO</p>
+                <ul>
+                    <li>kereses</li>
+                    <li>kep feltoltese</li>
+                    <li>hover effect -> terkep (mint airbnb-n)</li>
+                    <li>tovabbi informaciok (kartya megno lefele)</li>
+                </ul>
+                <!--<form name="search" novalidate>-->
+                    <!-- -->
+                <!--</form>-->
+            </md-content>
+            <md-card ng-repeat="pot in pots.pots track by pot.id">
+                <h2>{{pot.name}}</h2>
+                <p>
+                    {{pot.description}}
+                </p>
+            </md-card>
+        </div>
+    </div>
+</div>

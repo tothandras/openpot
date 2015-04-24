@@ -1,9 +1,9 @@
 <md-dialog class="login">
     <md-content>
-        Bejelentkezés
+        <h3>Belépés</h3>
         <form name="loginForm" novalidate>
             <md-input-container>
-                <label for="email">Felhasználónév</label>
+                <label for="email">Email</label>
                 <input id="email" type="email" name="email" ng-model="dialog.email" required>
                 <div ng-messages="loginForm.email.$error" ng-show="loginForm.email.$dirty">
                     <div ng-message="required">Kötelező megadni!</div>
@@ -11,9 +11,10 @@
             </md-input-container>
             <md-input-container>
                 <label for="password">Jelszó</label>
-                <input id="password" type="password" name="password" ng-model="dialog.password" required>
+                <input id="password" type="password" name="password" ng-model="dialog.password" minlength="8" required>
                 <div ng-messages="loginForm.password.$error" ng-show="loginForm.password.$dirty">
                     <div ng-message="required">Kötelező megadni!</div>
+                    <div ng-message="minlength">Túl rövid!</div>
                 </div>
             </md-input-container>
         </form>

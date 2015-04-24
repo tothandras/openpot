@@ -1,11 +1,16 @@
 module op.common {
     'use strict';
 
+    var user;
+
     /* @ngInject */
-    //function newUser(User: any): IUser {
-    //    return new User();
-    //}
+     function getUser(): IUser {
+         if (!user) {
+             user = new User();
+         }
+         return user;
+     }
 
     angular.module('op.common')
-        .value('user', null);
+        .constant('user', getUser());
 }

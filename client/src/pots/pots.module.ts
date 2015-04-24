@@ -1,12 +1,12 @@
-module op.users {
+module op.pots {
     'use strict';
 
-    angular.module('op.users', [
-        /* Core */
+    // register op.home module
+    angular.module('op.pots', [
         /* App */
         'op.common',
         /* Third party */
         'ui.router',
-        'angular-md5'
+        'uiGmapgoogle-maps'
     ]);
 }

@@ -7,6 +7,7 @@ module op.toolbar {
         /* App */
         'op.menu',
         'op.login',
+        'op.register',
         /* Third party */
         'ui.router'
     ]);

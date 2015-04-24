@@ -32,18 +32,22 @@ var (
 	potCollection  *mgo.Collection
 )
 
+// User represent an app user.
 type User struct {
 	ID          bson.ObjectId `json:"id" bson:"_id,omitempty"`
-	Email       string        `json:"email,omitempty" bson:"email"`
-	FirstName   string        `json:"firstName,omitempty" bson:"firstName"`
-	LastName    string        `json:"lastName,omitempty" bson:"lastName"`
+	Email       string        `json:"email" bson:"email"`
+	FirstName   string        `json:"firstName" bson:"firstName"`
+	LastName    string        `json:"lastName" bson:"lastName"`
 	Description string        `json:"description,omitempty" bson:"description"`
 	Phone       string        `json:"phone,omitempty" bson:"phone"`
-	Location    string        `json:"location,omitempty" bson"location"`
 	Stars       int           `json:"stars,omitempty" bson:"stars"`
 	Following   []string      `json:"following,omitempty" bson:"following"`
 	Password    string        `json:"-" bson: "password"`
-	//	ImageURL    string   `json:"imageURL"`
+}
+
+type UserRegistration struct {
+	User
+	Password string `json:"password"`
 }
 
 type Auth struct {
@@ -51,21 +55,28 @@ type Auth struct {
 	Token string `json:"token"`
 }
 
+//type Location struct {
+//	Lan     float64 `json:"lan" bson:"lan"`
+//	Lng     float64 `json:"lng" bson:"lng"`
+//	Address string  `json:"address" bson:"address"`
+//}
+
 type Pot struct {
-	ID          bson.ObjectId `json:"id" bson:"_id,omitempty`
-	Cook        bson.ObjectId `json:"cook"`
-	Consumer    bson.ObjectId `json:"consumer"`
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
+	ID          bson.ObjectId   `json:"id" bson:"_id,omitempty"`
+	Cook        bson.ObjectId   `json:"cook" bson:"cook"`
+	Consumers   []bson.ObjectId `json:"consumer" bson:"consumer"`
+	Name        string          `json:"name" bson:"name"`
+	Description string          `json:"description" bson:"description"`
+	Address     string          `json:"address" bson"address"`
 }
 
-type Message struct {
-	ID        bson.ObjectId `json:"id" bson:"_id,omitempty`
-	From      bson.ObjectId `json:"from"`
-	To        bson.ObjectId `json:"to"`
-	Content   string        `json:"content"`
-	Timestamp time.Time     `json:"time"`
-}
+//type Message struct {
+//	ID        bson.ObjectId `json:"id" bson:"_id,omitempty`
+//	From      bson.ObjectId `json:"from"`
+//	To        bson.ObjectId `json:"to"`
+//	Content   string        `json:"content"`
+//	Timestamp time.Time     `json:"time"`
+//}
 
 func init() {
 	privateKey, _ = ioutil.ReadFile("keys/app.rsa")
@@ -73,24 +84,33 @@ func init() {
 	publicKey, _ = ioutil.ReadFile("keys/app.rsa.pub")
 }
 
-func verify(r *http.Request) (string, error) {
+func verify(r *http.Request) (*User, error) {
 	token, err := jwt.ParseFromRequest(r, func(t *jwt.Token) (interface{}, error) {
 		// Validate the alg
 		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
-			return "", fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+			return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
 		}
 		return publicKey, nil
 	})
 
 	if err != nil || !token.Valid {
-		return "", fmt.Errorf("Token is not valid")
+		return nil, fmt.Errorf("Token is not valid")
 	}
 
-	return token.Claims[EMAIL].(string), nil
+	email := token.Claims[EMAIL].(string)
+
+	user := User{}
+	err = userCollection.Find(bson.M{"email": email}).One(&user)
+	if err != nil {
+		return nil, fmt.Errorf("Token is not valid")
+	}
+
+	return &user, nil
 }
 
+// DEMO private
 func private(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	email, err := verify(r)
+	user, err := verify(r)
 
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -98,7 +118,17 @@ func private(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, email)
+
+	b, err := json.Marshal(*user)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, string(b))
 }
 
 func register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -108,22 +138,40 @@ func register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	user := User{}
-	err = json.Unmarshal(body, &user)
+	ur := UserRegistration{}
+	err = json.Unmarshal(body, &ur)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "Incorrect user object")
 		return
 	}
 
-	err = userCollection.Insert(user)
-	if err != nil {
+	user := ur.User
+	user.Password = ur.Password
+
+	if user.Email == "" || user.Password == "" || user.FirstName == "" || user.LastName == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "Email already in use")
+		fmt.Fprintf(w, "Required fields missing")
 		return
 	}
 
+	if len(user.Password) < 8 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Password must be at least 8 characters long")
+		return
+	}
+
+	err = userCollection.Insert(user)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Email is already in use")
+		return
+	}
+
+	// TODO send email
+
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, "OK")
 	return
 }
 
@@ -265,16 +313,16 @@ func GETPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		fmt.Fprintf(w, string(b))
 
 	} else {
-		pot := Pot{}
-		err := potCollection.FindId(bson.ObjectId(id)).One(&pot)
-		fmt.Print(pot)
+		pots := make([]Pot, 0)
+		err := potCollection.Find(bson.M{"cook": bson.ObjectIdHex(id)}).All(&pots)
+		fmt.Print(pots)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprintf(w, "User not found")
 			return
 		}
 
-		b, err := json.Marshal(pot)
+		b, err := json.Marshal(pots)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Print(err)
@@ -286,6 +334,46 @@ func GETPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		fmt.Fprintf(w, string(b))
 
 	}
+}
+
+func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	user, err := verify(r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	pot := Pot{}
+	err = json.Unmarshal(body, &pot)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Incorrect pot object")
+		return
+	}
+
+	if pot.Name == "" || pot.Description == "" || pot.Address == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "Required fields missing")
+		return
+	}
+	pot.Cook = user.ID
+	fmt.Println(user.ID)
+
+	err = potCollection.Insert(pot)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func handleFiles(w http.ResponseWriter, r *http.Request) {
@@ -305,6 +393,7 @@ func main() {
 	defer session.Close()
 	db = session.DB("openpot")
 
+	potCollection = db.C("pot")
 	userCollection = db.C("user")
 	index := mgo.Index{
 		Key:        []string{"email"},
@@ -318,48 +407,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	potCollection = db.C("pot")
-
-//	err = userCollection.Insert(&User{
-//		bson.NewObjectId(),
-//		"d@ad.com",
-//		"Bsa",
-//		"Asd",
-//		"Description sample",
-//		"+36701234567",
-//		"location",
-//		5,
-//		[]string{},
-//		"pass",
-//	})
-//
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-
-//		err = potCollection.Insert(&Pot{
-//			potID(bson.NewObjectId()),
-//
-//		})
-//
-//		if err != nil {
-//			fmt.Println(err)
-//		}
-
 	router := httprouter.New()
 	// AUTH
 	router.POST("/auth/register", register)
 	router.POST("/auth/login", login)
-	// API
 
+	// API
 	router.GET("/api/user", GETUser)
 	router.GET("/api/user/:id", GETUser)
 	router.POST("/api/user/:id", POSTUser)
 
+	router.GET("/api/user/:id/pot", GETPot)
 	router.GET("/api/pot", GETPot)
-	router.GET("/api/pot/:id", GETPot)
+	router.POST("/api/pot", POSTPot)
 
-  // Handle files otherwise
+	// Handle files otherwise
 	router.NotFound = handleFiles
 
 	log.Println("Server is running on port: " + *port)

@@ -1,0 +1,12 @@
+<div class="list">
+    <md-card class="pot" ng-repeat="pot in user.pots track by pot.id">
+        <h2>{{pot.id}}</h2>
+
+        <p>
+            {{pot.description}}
+        </p>
+    </md-card>
+    <md-button class="md-fab" aria-label="Add new" ng-click="user.goToNewpot()">
+        <i class="fa fa-plus"></i>
+    </md-button>
+</div>
