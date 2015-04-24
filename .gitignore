@@ -6,7 +6,7 @@ node_modules/
 npm-debug.log
 
 # Build folder
-static/
+# static/
 
 # Mac
 .DS_Store
