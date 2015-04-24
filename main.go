@@ -79,9 +79,9 @@ type Pot struct {
 //}
 
 func init() {
-	privateKey, _ = ioutil.ReadFile("keys/app.rsa")
+	privateKey, _ = ioutil.ReadFile("/keys/app.rsa")
 	flag.Parse()
-	publicKey, _ = ioutil.ReadFile("keys/app.rsa.pub")
+	publicKey, _ = ioutil.ReadFile("/keys/app.rsa.pub")
 }
 
 func verify(r *http.Request) (*User, error) {
