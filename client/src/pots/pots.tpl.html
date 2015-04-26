@@ -1,7 +1,10 @@
 <div class="pots">
     <div layout="row" class="row">
         <div flex="35" class="info">
-            <ui-gmap-google-map options="pots.map.options" center='pots.map.center' zoom='pots.map.zoom'></ui-gmap-google-map>
+            <ui-gmap-google-map options="pots.map.options" center='pots.map.center' zoom='pots.map.zoom'>
+                <ui-gmap-markers models="pots.markers" coords="'self'" icon="'icon'">
+                </ui-gmap-markers>
+            </ui-gmap-google-map>
         </div>
         <div ng-if="pots.pots.length === 0" class="no-pots" layout="row" layout-align="center center">
             <h1>
@@ -12,9 +15,12 @@
         </div>
         <div flex class="list">
             <md-content>
-                <!--<form name="search" novalidate>-->
-                    <!-- -->
-                <!--</form>-->
+                <form name="search" novalidate>
+                    <md-input-container>
+                        <label for="name">Név</label>
+                        <input id="name" type="text" ng-model="pots.search"/>
+                    </md-input-container>
+                </form>
             </md-content>
             <md-card class="pot" ng-repeat="pot in pots.pots track by pot.id">
                 <h2>{{pot.name}}</h2>

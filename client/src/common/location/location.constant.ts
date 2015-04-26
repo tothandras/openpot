@@ -1,12 +1,12 @@
 module op.common {
 
     export class Location {
-        lat: number;
-        lng: number;
+        latitude: number;
+        longitude: number;
 
         constructor(lat: number = 0, lng: number = 0) {
-            this.lat = lat;
-            this.lng = lng;
+            this.latitude = lat;
+            this.longitude = lng;
         }
     }
 

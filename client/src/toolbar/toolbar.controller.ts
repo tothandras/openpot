@@ -53,7 +53,6 @@ module op.toolbar {
         logout(): void {
             this.dropdown = false;
             this.SessionService.unsetUser();
-            this.$state.transitionTo('home');
         }
 
         toggleDropdown(): void {

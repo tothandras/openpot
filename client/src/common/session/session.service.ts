@@ -14,10 +14,14 @@ module op.common {
         tokenObject: IToken;
 
         /* @ngInject */
-        constructor(public $q: ng.IQService,
+        constructor(
+                    public $rootScope: ng.IRootScopeService,
+                    public $state: ng.ui.IStateService,
+                    public $q: ng.IQService,
                     public localStorageService: ng.local.storage.ILocalStorageService<IToken>,
                     public APIService: IAPIService,
-                    public user: IUser) {
+                    public user: IUser,
+                    public EVENT_LOGIN_REQUIRED: string) {
             this.tokenObject = localStorageService.get(this.key);
             if (this.tokenObject && this.tokenObject.token) {
                 if (this.tokenObject.user) {
@@ -28,6 +32,8 @@ module op.common {
                     });
                 }
             }
+
+            $rootScope.$on(EVENT_LOGIN_REQUIRED, () => this.unsetUser());
         }
 
         setUser(token: IToken): void {
@@ -45,6 +51,7 @@ module op.common {
         unsetUser(): void {
             this.localStorageService.remove(this.key);
             this.user.unsetUser();
+            this.$state.transitionTo('home');
         }
 
         loggedIn(): boolean {
