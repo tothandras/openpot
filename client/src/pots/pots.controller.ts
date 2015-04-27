@@ -3,6 +3,9 @@ module op.pots {
 
     export interface IPotsScope {
         pots: op.common.IPot[];
+        map: any;
+        markers: IMarker[];
+        hover: (id: string) => void;
     }
 
     export interface IMarker {
@@ -15,21 +18,29 @@ module op.pots {
     class PotsController implements IPotsScope {
         name: string = 'Pots Controller';
         pots: op.common.IPot[] = [];
-        map: any = {
-            center: {latitude: 45, longitude: -73},
-            zoom: 8,
-            options: {
-                disableDefaultUI: true
-            }
-        };
+        map: any;
         markers: IMarker[] = [];
 
         /* @ngInject */
         constructor(
             $log: ng.ILogService,
             APIService: op.common.IAPIService,
+            LocationService: op.common.ILocationService,
             uiGmapGoogleMapApi: any) {
+
             $log.debug(this.name);
+
+            this.map = {
+                center: LocationService.getLastLocation(),
+                zoom: 8,
+                options: {
+                    disableDefaultUI: true
+                }
+            };
+            LocationService.getLocation().then((l: op.common.Location) => {
+                this.map.center = l;
+            });
+
             APIService.getPots().then((pots: op.common.IPot[]) => {
                 this.pots = pots;
                 uiGmapGoogleMapApi.then((maps: any) => {
@@ -55,6 +66,15 @@ module op.pots {
                     });
                 });
             });
+        }
+
+        hover(id: string): void {
+            for (var i = 0; i < this.markers.length; i++) {
+                var m = this.markers[i];
+                if (m.id === id) {
+                    this.map.center = new op.common.Location(m.latitude, m.longitude);
+                }
+            }
         }
     }
 

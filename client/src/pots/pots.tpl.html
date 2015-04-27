@@ -22,7 +22,9 @@
                     </md-input-container>
                 </form>
             </md-content>
-            <md-card class="pot" ng-repeat="pot in pots.pots track by pot.id">
+            <md-card class="pot"
+                     ng-repeat="pot in pots.pots | filter:pots.search track by pot.id"
+                     ng-mouseover="pots.hover(pot.id)">
                 <h2>{{pot.name}}</h2>
                 <p>
                     {{pot.description}}
