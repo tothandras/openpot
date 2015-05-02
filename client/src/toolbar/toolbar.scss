@@ -3,11 +3,44 @@
         position: absolute;
         z-index: 62;
     }
-    .fa {
+    .fa, .link {
         cursor: pointer;
-        padding-right: 16px;
+        padding-right: 10px;
+    }
+    .fa-caret-down {
+        padding-left: 10px;
+        transition: all ease-in-out 0.6s;
+    }
+    .link {
+        font-size: 0.8em;
     }
     .name {
         margin-right: 16px;
+    }
+    .dropdown {
+        position: absolute;
+        right: 0;
+        top: 64px;
+        width: 200px;
+        background: #ffffff;
+        color: #454545;
+        font-size: 1em;
+        overflow: hidden;
+        transition: top ease-in-out 0.6s;
+        z-index: 60;
+
+        ul {
+            list-style: none;
+            padding-left: 15px;
+
+            li {
+                margin-top: 5px;
+                cursor: pointer;
+            }
+        }
+
+        &.ng-hide {
+            top: -64px;
+        }
     }
 }

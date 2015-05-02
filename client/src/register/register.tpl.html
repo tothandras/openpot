@@ -1,3 +1,43 @@
-<div class="register">
-    
-</div>
+<md-dialog class="register">
+    <md-content>
+        <h3>Regisztráció</h3>
+        <form name="registerForm" novalidate>
+            <md-input-container>
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" ng-model="dialog.email" required>
+                <div ng-messages="registerForm.email.$error" ng-show="registerForm.email.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label for="password">Jelszó</label>
+                <input id="password" type="password" name="password" ng-model="dialog.password" minlength="8" required>
+                <div ng-messages="registerForm.password.$error" ng-show="registerForm.password.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                    <div ng-message="minlength">Túl rövid!</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label for="firstName">Keresztnév</label>
+                <input id="firstName" type="text" name="firstName" ng-model="dialog.firstName" required>
+                <div ng-messages="registerForm.firstName.$error" ng-show="registerForm.firstName.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                </div>
+            </md-input-container>
+            <md-input-container>
+                <label for="lastName">Vezetéknév</label>
+                <input id="lastName" type="text" name="lastName" ng-model="dialog.lastName" required>
+                <div ng-messages="registerForm.lastName.$error" ng-show="registerForm.lastName.$dirty">
+                    <div ng-message="required">Kötelező megadni!</div>
+                </div>
+            </md-input-container>
+        </form>
+        <div class="error-container">
+            <span class="error" ng-show="dialog.error">Ez az email cím már használatban van.</span>
+        </div>
+    </md-content>
+    <div class="md-actions">
+        <md-button class="md-primary" ng-click="dialog.register()" ng-disabled="registerForm.$invalid">OK</md-button>
+        <md-button ng-click="dialog.closeDialog()">Mégse</md-button>
+    </div>
+</md-dialog>

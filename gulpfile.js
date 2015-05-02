@@ -1,4 +1,6 @@
 var gulp = require('gulp');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
 
 /** gulp plugins & dependencies */
 var p = require('gulp-load-plugins')({
@@ -63,6 +65,7 @@ config.karma = {
     autoWatch: WATCH,
     browsers: KARMA_BROWSERS
 };
+config.port = '8030';
 
 /** tasks */
 gulp.task('clean', function() {
@@ -139,7 +142,7 @@ gulp.task('build-ts', ['lint-ts'], function() {
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
         .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}))
-        .pipe(p.livereload());
+        .pipe(reload({stream:true}));
 });
 
 gulp.task('build-lib', function() {
@@ -176,7 +179,7 @@ gulp.task('build-lib', function() {
         .pipe(gulp.dest(config.paths.font, {cwd: config.paths.build}));
 
     return p.mergeStream(js, css, font)
-        .pipe(p.livereload());
+        .pipe(reload({stream:true}));
 });
 
 gulp.task('build-sass', function() {
@@ -197,7 +200,7 @@ gulp.task('build-sass', function() {
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
         .pipe(gulp.dest(config.paths.style, {cwd: config.paths.build}))
-        .pipe(p.livereload());
+        .pipe(reload({stream:true}));
 });
 
 gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function() {
@@ -209,14 +212,13 @@ gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function() {
     return gulp.src(config.files.index)
         .pipe(p.inject(files, {addRootSlash: false}))
         .pipe(gulp.dest(config.paths.build))
-        .pipe(p.livereload());
+        .pipe(reload({stream:true}));
 });
 
 gulp.task('build', ['build-ts', 'build-sass', 'build-lib', 'build-index']);
 
 gulp.task('watch', function() {
     if (WATCH) {
-        p.livereload.listen({start: true, quiet: true});
         gulp.watch(config.files.typescript.src, ['build-ts']);
         gulp.watch(config.files.typescript.test, ['build-ts']);
         gulp.watch(config.files.template, ['build-ts']);
@@ -232,4 +234,14 @@ gulp.task('test-karma', ['build-ts', 'build-lib'], function(done){
     }
 });
 
-gulp.task('default', ['clean', 'build', 'watch', 'test-karma']);
+gulp.task('browser-sync', function() {
+    if (WATCH) {
+        browserSync({
+            notify: false,
+            open: false,
+            proxy: 'localhost:' + config.port
+        });
+    }
+});
+
+gulp.task('default', ['clean', 'build', 'watch', 'test-karma', 'browser-sync']);

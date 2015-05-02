@@ -7,7 +7,6 @@ module op.login {
         /* App */
         'op.common',
         /* Third party */
-        'ui.router',
-        'LocalStorageModule'
+        'ui.router'
     ]);
 }

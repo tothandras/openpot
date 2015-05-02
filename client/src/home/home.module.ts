@@ -4,7 +4,7 @@ module op.home {
     // register op.home module
     angular.module('op.home', [
         /* App */
-        'op.common',
+        // 'op.common',
         /* Third party */
         'ui.router'
     ]);

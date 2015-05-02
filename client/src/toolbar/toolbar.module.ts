@@ -1,9 +1,14 @@
 module op.toolbar {
     'use strict';
 
-    // register op.toolbar module
     angular.module('op.toolbar', [
+        /* Core */
+        'ngMaterial',
+        /* App */
+        'op.menu',
         'op.login',
-        'op.user'
+        'op.register',
+        /* Third party */
+        'ui.router'
     ]);
 }

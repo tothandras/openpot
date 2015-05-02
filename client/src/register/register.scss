@@ -1,3 +1,18 @@
 .register {
-    
+    min-width: 250px;
+
+    h3 {
+        text-align: center;
+        font-weight: 400;
+    }
+
+    .error-container {
+        height: 16px;
+
+        .error {
+            font-size: 12px;
+            line-height: 24px;
+            color: rgb(244, 67, 54);
+        }
+    }
 }

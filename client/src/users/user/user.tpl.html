@@ -1,0 +1,11 @@
+<div class="user">
+    <div layout="row" class="row">
+        <div flex="25" class="info">
+            <div class="img-container">
+                <img ng-src="{{::user.data.image}}" alt="" class="circle responsive-image"/>
+            </div>
+            <h2 class="firstName">{{::user.data.firstName}}</h2>
+        </div>
+        <div flex class="subview" ui-view></div>
+    </div>
+</div>

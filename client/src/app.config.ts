@@ -3,10 +3,10 @@ module op {
 
     /* @ngInject */
     function config($locationProvider: ng.ILocationProvider,
-        $urlRouterProvider: ng.ui.IUrlRouterProvider,
-        $compileProvider: ng.ICompileProvider,
-        $logProvider: ng.ILogProvider,
-        RELEASE: boolean): void {
+                    $urlRouterProvider: ng.ui.IUrlRouterProvider,
+                    $compileProvider: ng.ICompileProvider,
+                    $logProvider: ng.ILogProvider,
+                    RELEASE: boolean): void {
 
         $locationProvider.html5Mode(true);
         $urlRouterProvider.otherwise('/');
@@ -15,5 +15,5 @@ module op {
     }
 
     angular.module('op')
-      .config(config);
+        .config(config);
 }

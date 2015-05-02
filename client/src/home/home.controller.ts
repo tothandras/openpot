@@ -6,15 +6,14 @@ module op.home {
     }
 
     class HomeController implements IHomeScope {
-        name: string;
+        name: string = 'Home Controller';
 
         /* @ngInject */
-        constructor() {
-            this.name = 'Home Controller';
+        constructor($log: ng.ILogService) {
+            $log.debug(this.name);
         }
     }
 
-    // register HomeController
     angular.module('op.home')
         .controller('HomeController', HomeController);
 }

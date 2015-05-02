@@ -1,7 +1,7 @@
 module op.register {
     'use strict';
 
-    // register op.register module
+    // register op.login module
     angular.module('op.register', [
         /* Core */
         /* App */

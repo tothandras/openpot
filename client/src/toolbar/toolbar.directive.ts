@@ -3,11 +3,7 @@ module op.toolbar {
 
     class ToolbarDirective implements ng.IDirective {
         restrict: string = 'E'; // element
-        scope: any = {
-            /*attr1: '=', // bidirection binding to an object
-            attr2: '&', // binding to an expression
-            attr3: '@'  // binds to a string value*/
-        };
+        scope: any = {};
         controller: string = 'ToolbarController';
         controllerAs: string = 'toolbar';
         bindToController: boolean = true;
@@ -16,15 +12,8 @@ module op.toolbar {
         replace: boolean = true;
 
         static instance(): ToolbarDirective {
-          return new ToolbarDirective;
+            return new ToolbarDirective;
         }
-
-        // link(scope: ng.IScope,
-        //   element: ng.IAugmentedJQuery,
-        //   attrs: ng.IAttributes,
-        //   controller: IToolbarScope): void {
-        //
-        // }
     }
 
     // register Toolbar Directive
