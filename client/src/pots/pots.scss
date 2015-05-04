@@ -17,6 +17,26 @@
 
         .pot {
             padding-left: 50px;
+            cursor: pointer;
+
+            .img-container {
+                height: 100%;
+                padding-left: 20%;
+                padding-right: 20%;
+            }
+
+            //.details {
+            //    height: 50px;
+            //}
+            //
+            //.details.ng-hide-add.ng-hide-add-active,
+            //.details.ng-hide-remove.ng-hide-remove-active {
+            //    transition: all linear 0.2s;
+            //}
+            //
+            //.details.ng-hide {
+            //    height: 0;
+            //}
         }
     }
 

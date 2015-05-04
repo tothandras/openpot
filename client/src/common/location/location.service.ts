@@ -4,6 +4,7 @@ module op.common {
     export interface ILocationService {
         getLocation: () => ng.IPromise<Location>;
         getLastLocation: () => Location;
+        geocode: (address: string) => ng.IPromise<Location>;
     }
 
     class LocationService implements ILocationService {
@@ -13,11 +14,11 @@ module op.common {
         key: string = 'lastLocation';
 
         /* @ngInject */
-        constructor(
-            private $log: ng.ILogService,
-            private $q: ng.IQService,
-            public localStorageService: ng.local.storage.ILocalStorageService<Location>,
-            $window: ng.IWindowService) {
+        constructor(public $log: ng.ILogService,
+                    public $q: ng.IQService,
+                    public localStorageService: ng.local.storage.ILocalStorageService<Location>,
+                    public uiGmapGoogleMapApi: any,
+                    $window: ng.IWindowService) {
             this.deferred = $q.defer();
             if ('geolocation' in $window.navigator) {
                 this.geolocation = $window.navigator.geolocation;
@@ -46,6 +47,27 @@ module op.common {
 
         getLastLocation(): Location {
             return this.localStorageService.get(this.key);
+        }
+
+        geocode(address: string): ng.IPromise<Location> {
+            var deferred: ng.IDeferred<Location> = this.$q.defer();
+
+            this.uiGmapGoogleMapApi.then((maps: any) => {
+                var geocoder = new maps.Geocoder();
+                geocoder.geocode({address: address}, (results: any, status: any) => {
+                    if (status === maps.GeocoderStatus.OK) {
+                        var location: op.common.Location = new op.common.Location(
+                            results[0].geometry.location.lat(),
+                            results[0].geometry.location.lng()
+                        );
+                        deferred.resolve(location);
+                    } else {
+                        deferred.reject();
+                    }
+                });
+            });
+
+            return deferred.promise;
         }
     }
 

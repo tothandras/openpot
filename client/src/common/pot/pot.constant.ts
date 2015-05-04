@@ -6,6 +6,7 @@ module op.common {
         name: string;
         description: string;
         address: string;
+        user?: IUser;
 
         setPot: (pot: IPot) => void;
     }

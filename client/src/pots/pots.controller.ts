@@ -5,7 +5,7 @@ module op.pots {
         pots: op.common.IPot[];
         map: any;
         markers: IMarker[];
-        hover: (id: string) => void;
+        mouseEnter: (id: string) => void;
     }
 
     export interface IMarker {
@@ -20,19 +20,21 @@ module op.pots {
         pots: op.common.IPot[] = [];
         map: any;
         markers: IMarker[] = [];
+        detailsID: string;
 
         /* @ngInject */
-        constructor(
-            $log: ng.ILogService,
-            APIService: op.common.IAPIService,
-            LocationService: op.common.ILocationService,
-            uiGmapGoogleMapApi: any) {
+        constructor($log: ng.ILogService,
+                    APIService: op.common.IAPIService,
+                    LocationService: op.common.ILocationService,
+                    uiGmapGoogleMapApi: any,
+                    GravatarService: op.common.GravatarService) {
 
             $log.debug(this.name);
+            angular.extend(this, GravatarService);
 
             this.map = {
                 center: LocationService.getLastLocation(),
-                zoom: 8,
+                zoom: 12,
                 options: {
                     disableDefaultUI: true
                 }
@@ -42,39 +44,39 @@ module op.pots {
             });
 
             APIService.getPots().then((pots: op.common.IPot[]) => {
-                this.pots = pots;
-                uiGmapGoogleMapApi.then((maps: any) => {
-                    this.pots.forEach((p: op.common.Pot) => {
-                        var geocoder = new maps.Geocoder();
-                        geocoder.geocode({address: p.address}, (results: any, status: any) => {
-                            if (status === maps.GeocoderStatus.OK) {
-                                var location: op.common.Location = new op.common.Location(
-                                    results[0].geometry.location.lat(),
-                                    results[0].geometry.location.lng()
-                                );
-                                $log.debug(location);
-                                $log.debug(p.id);
-                                var m: IMarker = {
-                                    id: p.id,
-                                    latitude: location.latitude,
-                                    longitude: location.longitude,
-                                    title: p.name
-                                };
-                                this.markers.push(m);
-                            }
-                        });
+                pots.forEach((p: op.common.IPot) => {
+                    APIService.getUserData(p.cook).then((u: op.common.IUser) => {
+                        p.user = u;
+                        this.pots.push(p);
                     });
+                    LocationService.geocode(p.address).then((location: op.common.Location) => {
+                        var m: IMarker = {
+                            id: p.id,
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                            title: p.name
+                        };
+                        this.markers.push(m);
+                    })
                 });
             });
         }
 
-        hover(id: string): void {
+        mouseEnter(id: string): void {
             for (var i = 0; i < this.markers.length; i++) {
                 var m = this.markers[i];
                 if (m.id === id) {
                     this.map.center = new op.common.Location(m.latitude, m.longitude);
                 }
             }
+        }
+
+        onClick(id: string): void {
+            this.detailsID = id;
+        }
+
+        showDetails(id: string): boolean {
+            return this.detailsID === id;
         }
     }
 

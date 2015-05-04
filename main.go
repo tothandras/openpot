@@ -241,7 +241,6 @@ func GETUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	} else {
 		user := User{}
 		err := userCollection.FindId(bson.ObjectIdHex(id)).One(&user)
-		fmt.Print(user)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprintf(w, "User not found")
@@ -315,7 +314,6 @@ func GETPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	} else {
 		pots := make([]Pot, 0)
 		err := potCollection.Find(bson.M{"cook": bson.ObjectIdHex(id)}).All(&pots)
-		fmt.Print(pots)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			fmt.Fprintf(w, "User not found")
@@ -364,7 +362,6 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 	pot.Cook = user.ID
-	fmt.Println(user.ID)
 
 	err = potCollection.Insert(pot)
 	if err != nil {

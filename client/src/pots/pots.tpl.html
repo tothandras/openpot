@@ -1,7 +1,7 @@
 <div class="pots">
     <div layout="row" class="row">
         <div flex="35" class="info">
-            <ui-gmap-google-map options="pots.map.options" center='pots.map.center' zoom='pots.map.zoom'>
+            <ui-gmap-google-map options="pots.map.options" center='pots.map.center' zoom='pots.map.zoom' pan="true">
                 <ui-gmap-markers models="pots.markers" coords="'self'" icon="'icon'">
                 </ui-gmap-markers>
             </ui-gmap-google-map>
@@ -24,11 +24,16 @@
             </md-content>
             <md-card class="pot"
                      ng-repeat="pot in pots.pots | filter:pots.search track by pot.id"
-                     ng-mouseover="pots.hover(pot.id)">
+                     ng-mouseenter="pots.mouseEnter(pot.id)"
+                     ng-mouseleave="pots.mouseLeave(pot.id)"
+                     ng-click="pots.onClick(pot.id)">
                 <h2>{{pot.name}}</h2>
-                <p>
-                    {{pot.description}}
-                </p>
+                <section class="details" ng-show="pots.showDetails(pot.id)">
+                    <p>{{pot.description}}</p>
+                    <div class="img-container">
+                        <img ng-src="{{pots.gravatar(pot.user.email)}}" alt="" class="circle responsive-image"/>
+                    </div>
+                </section>
             </md-card>
         </div>
     </div>
