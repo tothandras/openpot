@@ -4,7 +4,9 @@
         <p>
             {{pot.description}}
         </p>
-        <md-button ng-click="user.deletePot(pot.id)">DELETE</md-button>
+        <md-button class="delete-button" ng-click="user.deletePot(pot.id, $event)">
+            <i class="fa fa-times"></i>
+        </md-button>
     </md-card>
     <md-button class="md-fab" aria-label="Add new" ng-click="user.goToNewpot()">
         <i class="fa fa-plus"></i>

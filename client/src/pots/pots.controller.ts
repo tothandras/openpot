@@ -20,17 +20,14 @@ module op.pots {
         pots: op.common.IPot[] = [];
         map: any;
         markers: IMarker[] = [];
-        detailsID: string;
 
         /* @ngInject */
         constructor($log: ng.ILogService,
                     APIService: op.common.IAPIService,
                     LocationService: op.common.ILocationService,
-                    uiGmapGoogleMapApi: any,
-                    GravatarService: op.common.GravatarService) {
+                    uiGmapGoogleMapApi: any) {
 
             $log.debug(this.name);
-            angular.extend(this, GravatarService);
 
             uiGmapGoogleMapApi.then((maps: any) => {
                 this.map = {
@@ -38,7 +35,7 @@ module op.pots {
                     zoom: 12,
                     options: {
                         disableDefaultUI: true,
-                        scrollwheel: false,
+                        //scrollwheel: false,
                         zoomControl: true,
                         zoomControlOptions: {
                             style: maps.ZoomControlStyle.SMALL,
@@ -47,18 +44,15 @@ module op.pots {
                         streetViewControl: true
                     }
                 };
-            });
 
-            LocationService.getLocation().then((l: op.common.Location) => {
-                this.map.center = l;
+                LocationService.getLocation().then((l: op.common.Location) => {
+                    this.map.center = l;
+                });
             });
 
             APIService.getPots().then((pots: op.common.IPot[]) => {
+                this.pots = pots;
                 pots.forEach((p: op.common.IPot) => {
-                    APIService.getUserData(p.cook).then((u: op.common.IUser) => {
-                        p.user = u;
-                        this.pots.push(p);
-                    });
                     LocationService.geocode(p.address).then((location: op.common.Location) => {
                         var m: IMarker = {
                             id: p.id,
@@ -79,14 +73,6 @@ module op.pots {
                     this.map.center = new op.common.Location(m.latitude, m.longitude);
                 }
             }
-        }
-
-        onClick(id: string): void {
-            this.detailsID = id;
-        }
-
-        showDetails(id: string): boolean {
-            return this.detailsID === id;
         }
     }
 

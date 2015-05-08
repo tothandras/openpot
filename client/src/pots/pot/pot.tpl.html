@@ -1,0 +1,10 @@
+<md-card class="pot">
+    <h2 ng-click="pot.toggleDescription()">{{pot.name}}</h2>
+    <section class="details" ng-show="pot.showDescription">
+        <p>{{pot.description}}</p>
+    </section>
+    <div class="img-container">
+        <img ng-src="{{pot.gravatar(pot.user.email)}}" alt="" class="circle responsive-image"/>
+    </div>
+</md-card>
+

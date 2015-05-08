@@ -3,7 +3,7 @@ module op.users {
 
     export interface IUserScope {
         data: op.common.IUser;
-        deletePot: (id: string) => void;
+        deletePot: (id: string, $event: ng.IAngularEvent) => void;
     }
 
     class UserController implements IUserScope {
@@ -24,6 +24,7 @@ module op.users {
                     md5: any,
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
+                    public $mdDialog: any,
                     LoginDialogService: op.login.ILoginDialogService) {
             $log.debug(this.name);
 
@@ -85,16 +86,26 @@ module op.users {
         }
 
 
-        deletePot(id: string): void {
-            this.APIService.deletePot(id).then(() => {
-                for(var i = 0; i < this.pots.length; i++) {
-                    if (this.pots[i].id === id) {
-                        this.pots.splice(i, 1);
-                    }
-                }
-            }, (reason: string) => {
-                this.$log.debug(reason)
-            })
+        deletePot(id: string, $event: ng.IAngularEvent): void {
+            this.$mdDialog.show(
+                this.$mdDialog.confirm()
+                    .title('Törlés')
+                    .content('Biztosan törölni szeretné?')
+                    .ok('Igen')
+                    .cancel('Mégse')
+                    .targetEvent($event)
+            )
+                .then(() => {
+                    this.APIService.deletePot(id).then(() => {
+                        for (var i = 0; i < this.pots.length; i++) {
+                            if (this.pots[i].id === id) {
+                                this.pots.splice(i, 1);
+                            }
+                        }
+                    }, (reason: string) => {
+                        this.$log.debug(reason)
+                    })
+                });
         }
     }
 

@@ -1,0 +1,30 @@
+.pot {
+    position: relative;
+    padding-left: 50px;
+
+    h2 {
+        cursor: pointer;
+    }
+
+    .img-container {
+        position: absolute;
+        right: 20px;
+        bottom: -5px;
+        width: 50px;
+        height: 50px;
+    }
+
+    .details {
+        height: 90px;
+        overflow: hidden;
+    }
+
+    .details.ng-hide-add.ng-hide-add-active,
+    .details.ng-hide-remove.ng-hide-remove-active {
+        transition: all linear 0.2s;
+    }
+
+    .details.ng-hide {
+        height: 0;
+    }
+}

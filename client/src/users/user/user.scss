@@ -61,7 +61,14 @@
 
     .list {
         .pot {
+            position: relative;
             padding-left: 50px;
+
+            .delete-button {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+            }
         }
     }
 }
