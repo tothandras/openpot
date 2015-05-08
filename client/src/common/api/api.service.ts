@@ -6,15 +6,16 @@ module op.common {
         getPots: () => ng.IPromise<IPot[]>;
         getUserPots: (id: string) => ng.IPromise<IPot[]>;
         createPot: (pot: IPot) => ng.IPromise<string>;
+        deletePot: (id: string) => ng.IPromise<string>;
     }
 
     class APIService implements IAPIService {
 
         /* @ngInject */
-        constructor(
-            public $http: ng.IHttpService,
-            public $q: ng.IQService,
-            public API_URL: string) {
+        constructor(public $http: ng.IHttpService,
+                    public $q: ng.IQService,
+                    public $log: ng.ILogService,
+                    public API_URL: string) {
         }
 
         getUserData(id: string): ng.IPromise<IUser> {
@@ -26,9 +27,9 @@ module op.common {
             };
             this.$http(requestConfig)
                 .success((response: any) => {
-                             var userData: IUser = new User(response);
-                             deferred.resolve(userData);
-                         })
+                    var userData: IUser = new User(response);
+                    deferred.resolve(userData);
+                })
                 .error((response: string) => deferred.reject(response));
 
             return deferred.promise;
@@ -46,7 +47,7 @@ module op.common {
                     var pots: IPot[] = [];
                     if (angular.isArray(response)) {
                         response.forEach((p: any) => {
-                           var pot = new Pot(p);
+                            var pot = new Pot(p);
                             // TODO
                             //this.getUserData(pot.cook).then((user) => {
                             //});
@@ -66,7 +67,7 @@ module op.common {
 
             var requestConfig: ng.IRequestConfig = {
                 method: 'GET',
-                url: this.API_URL + '/user/'  + id + '/pot'
+                url: this.API_URL + '/user/' + id + '/pot'
             };
             this.$http(requestConfig)
                 .success((response: any) => {
@@ -93,6 +94,25 @@ module op.common {
                 url: this.API_URL + '/pot',
                 data: pot
             };
+            this.$http(requestConfig)
+                .success((response: string) => {
+                    deferred.resolve(response);
+                })
+                .error((response: string) => deferred.reject(response));
+
+            return deferred.promise;
+        }
+
+
+        deletePot(id: string): ng.IPromise<string> {
+            this.$log.debug('deletePot');
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'DELETE',
+                url: this.API_URL + '/pot/' + id,
+            };
+
             this.$http(requestConfig)
                 .success((response: string) => {
                     deferred.resolve(response);

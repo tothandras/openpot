@@ -1,10 +1,10 @@
 <div class="list">
     <md-card class="pot" ng-repeat="pot in user.pots track by pot.id">
         <h2>{{pot.name}}</h2>
-
         <p>
             {{pot.description}}
         </p>
+        <md-button ng-click="user.deletePot(pot.id)">DELETE</md-button>
     </md-card>
     <md-button class="md-fab" aria-label="Add new" ng-click="user.goToNewpot()">
         <i class="fa fa-plus"></i>

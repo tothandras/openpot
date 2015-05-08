@@ -3,6 +3,7 @@ module op.users {
 
     export interface IUserScope {
         data: op.common.IUser;
+        deletePot: (id: string) => void;
     }
 
     class UserController implements IUserScope {
@@ -17,7 +18,7 @@ module op.users {
 
         /* @ngInject */
         constructor($scope: ng.IScope,
-                    $log: ng.ILogService,
+                    public $log: ng.ILogService,
                     public $state: ng.ui.IStateService,
                     $stateParams: any,
                     md5: any,
@@ -77,9 +78,23 @@ module op.users {
                 description: this.newDescription,
                 address: this.newAddress
             });
-            this.APIService.createPot(pot).then((e: string) => {
+            this.APIService.createPot(pot).then((response: string) => {
                 this.$state.transitionTo('user.list');
+                this.getPots(this.data.id);
             });
+        }
+
+
+        deletePot(id: string): void {
+            this.APIService.deletePot(id).then(() => {
+                for(var i = 0; i < this.pots.length; i++) {
+                    if (this.pots[i].id === id) {
+                        this.pots.splice(i, 1);
+                    }
+                }
+            }, (reason: string) => {
+                this.$log.debug(reason)
+            })
         }
     }
 

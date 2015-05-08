@@ -105,6 +105,7 @@ func verify(r *http.Request) (*User, error) {
 		return nil, fmt.Errorf("Token is not valid")
 	}
 
+//  fmt.Printf(user.ID.String())
 	return &user, nil
 }
 
@@ -334,6 +335,39 @@ func GETPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	}
 }
 
+func DELETEPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+
+  user, err := verify(r)
+
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  id := p.ByName("id")
+  if id == "" {
+    w.WriteHeader(http.StatusBadRequest)
+    return
+  }
+
+  pot := &Pot{}
+  potCollection.FindId(bson.ObjectIdHex(id)).One(pot)
+
+  if pot.Cook != user.ID {
+    w.WriteHeader(http.StatusBadRequest)
+    fmt.Fprintf(w, "The authorized user is not the cook of the pot")
+    return
+  }
+
+  err = potCollection.RemoveId(bson.ObjectIdHex(id))
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    return
+  }
+
+  w.WriteHeader(http.StatusOK)
+}
+
 func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	user, err := verify(r)
 
@@ -417,6 +451,7 @@ func main() {
 	router.GET("/api/user/:id/pot", GETPot)
 	router.GET("/api/pot", GETPot)
 	router.POST("/api/pot", POSTPot)
+  router.DELETE("/api/pot/:id", DELETEPot)
 
 	// Handle files otherwise
 	router.NotFound = handleFiles

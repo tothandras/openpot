@@ -32,13 +32,23 @@ module op.pots {
             $log.debug(this.name);
             angular.extend(this, GravatarService);
 
-            this.map = {
-                center: LocationService.getLastLocation(),
-                zoom: 12,
-                options: {
-                    disableDefaultUI: true
-                }
-            };
+            uiGmapGoogleMapApi.then((maps: any) => {
+                this.map = {
+                    center: LocationService.getLastLocation(),
+                    zoom: 12,
+                    options: {
+                        disableDefaultUI: true,
+                        scrollwheel: false,
+                        zoomControl: true,
+                        zoomControlOptions: {
+                            style: maps.ZoomControlStyle.SMALL,
+                            position: maps.ControlPosition.LEFT_BOTTOM
+                        },
+                        streetViewControl: true
+                    }
+                };
+            });
+
             LocationService.getLocation().then((l: op.common.Location) => {
                 this.map.center = l;
             });
