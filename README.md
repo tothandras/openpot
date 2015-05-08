@@ -1,4 +1,4 @@
-OpenPot [![Codeship Status for tothandras/openpot](https://codeship.com/projects/.../status?branch=master)](https://codeship.com/projects/...)
+OpenPot
 ==
 
 ### Fetch and install
