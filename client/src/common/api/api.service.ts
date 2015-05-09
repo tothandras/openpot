@@ -15,7 +15,18 @@ module op.common {
         constructor(public $http: ng.IHttpService,
                     public $q: ng.IQService,
                     public $log: ng.ILogService,
-                    public API_URL: string) {
+                    public API_URL: string,
+                    public Upload: any,
+                    public S3: S3) {
+            $log.debug(S3);
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'GET',
+                url: this.API_URL + '/s3policy'
+            };
+            $http(requestConfig).success((response: any) => {
+                $log.debug(response);
+            });
         }
 
         getUserData(id: string): ng.IPromise<IUser> {
@@ -95,22 +106,38 @@ module op.common {
                 data: pot
             };
             this.$http(requestConfig)
-                .success((response: string) => {
-                    deferred.resolve(response);
+                .success((id: string) => {
+                    // Upload image to S3
+                    var filename = id + '.' + pot.image.name.split('.').pop();
+                    this.$log.debug(filename);
+                    this.Upload.upload({
+                        url: 'https://openpot.s3.amazonaws.com/',
+                        method: 'POST',
+                        fields : {
+                            key: filename, // the key to store the file on S3, could be file name or customized
+                            AWSAccessKeyId: '',
+                            acl: this.S3.acl, // sets the access to the uploaded file in the bucket: private or public
+                            policy: this.S3.policy, // base64-encoded json policy (see article below)
+                            signature: this.S3.signature, // base64-encoded signature based on policy string (see article below)
+                            "Content-Type": pot.image.type, // content type of the file (NotEmpty)
+                            filename: filename // this is needed for Flash polyfill IE8-9
+                        },
+                        file: pot.image
+                    });
+
+                    deferred.resolve(id);
                 })
                 .error((response: string) => deferred.reject(response));
 
             return deferred.promise;
         }
 
-
         deletePot(id: string): ng.IPromise<string> {
-            this.$log.debug('deletePot');
             var deferred: ng.IDeferred<string> = this.$q.defer();
 
             var requestConfig: ng.IRequestConfig = {
                 method: 'DELETE',
-                url: this.API_URL + '/pot/' + id,
+                url: this.API_URL + '/pot/' + id
             };
 
             this.$http(requestConfig)
@@ -119,6 +146,11 @@ module op.common {
                 })
                 .error((response: string) => deferred.reject(response));
 
+            return deferred.promise;
+        }
+
+        upload(image: File): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
             return deferred.promise;
         }
     }

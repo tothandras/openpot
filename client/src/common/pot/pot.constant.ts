@@ -7,6 +7,7 @@ module op.common {
         description: string;
         address: string;
         user?: IUser;
+        image?: File;
 
         setPot: (pot: IPot) => void;
     }
@@ -18,6 +19,7 @@ module op.common {
         name: string;
         description: string;
         address: string;
+        image: File;
 
         constructor(obj?: any) {
             this.setPot(obj)
@@ -30,6 +32,7 @@ module op.common {
             this.name = obj && obj.name;
             this.description = obj && obj.description;
             this.address = obj && obj.address;
+            this.image = obj && obj.image;
         }
     }
 

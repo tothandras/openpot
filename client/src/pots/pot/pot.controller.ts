@@ -10,13 +10,16 @@ module op.pots {
         showDescription: boolean = false;
 
         /* @ngInject */
-        constructor($log: ng.ILogService, GravatarService: op.common.GravatarService) {
+        constructor($log: ng.ILogService, public GravatarService: op.common.GravatarService) {
             angular.extend(this, this.pot);
-            angular.extend(this, GravatarService);
         }
 
         toggleDescription(): void {
             this.showDescription = !this.showDescription;
+        }
+
+        gravatar(email: string): string {
+            return this.GravatarService.gravatar(email);
         }
     }
 

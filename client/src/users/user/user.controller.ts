@@ -2,60 +2,59 @@ module op.users {
     'use strict';
 
     export interface IUserScope {
+        myUser: boolean;
         data: op.common.IUser;
+        pots: op.common.IPot[];
         deletePot: (id: string, $event: ng.IAngularEvent) => void;
+        newPot: () => void;
     }
 
     class UserController implements IUserScope {
         name: string = 'User Controller';
         data: op.common.IUser;
         pots: op.common.IPot[];
+        myUser: boolean;
 
         newName: string;
         newDescription: string;
         newAddress: string;
+        newImage: File[];
         error: string;
 
         /* @ngInject */
-        constructor($scope: ng.IScope,
-                    public $log: ng.ILogService,
+        constructor(public $log: ng.ILogService,
                     public $state: ng.ui.IStateService,
                     $stateParams: any,
+                    public $mdDialog: any,
                     md5: any,
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
-                    public $mdDialog: any,
                     LoginDialogService: op.login.ILoginDialogService) {
-            $log.debug(this.name);
 
-            SessionService.getUser().then((user: op.common.IUser) => {
-                this.data = user;
-                this.data.image = 'http://www.gravatar.com/avatar/' + md5.createHash(this.data.email || '') + '?d=mm&s=200';
-                this.getPots(this.data.id);
+            var id: string = $stateParams.id;
+            SessionService.getUser().then((sessionUser: op.common.IUser) => {
+                this.myUser =  id === '' || sessionUser.id === id;
+
+                if (this.myUser) {
+                    SessionService.getUser().then((user: op.common.IUser) => {
+                        this.data = user;
+                        this.data.image = 'http://www.gravatar.com/avatar/' + md5.createHash(this.data.email || '') + '?d=mm&s=200';
+                        this.getPots(this.data.id);
+                    });
+
+                    if (!SessionService.loggedIn()) {
+                        LoginDialogService.showDialog(null).then((p: ng.IPromise<string>) => {
+                            $state.transitionTo('home');
+                        });
+                    }
+                } else {
+                    APIService.getUserData(id).then((user: op.common.IUser) => {
+                        this.data = user;
+                        this.data.image = 'http://www.gravatar.com/avatar/' + md5.createHash(this.data.email || '') + '?d=mm&s=200';
+                        this.getPots(this.data.id);
+                    }, (reason: string) => this.$state.transitionTo('home'));
+                }
             });
-
-            if (!SessionService.loggedIn()) {
-                LoginDialogService.showDialog(null).then((p: ng.IPromise<string>) => {
-                    $log.debug(p);
-                    $state.transitionTo('home');
-                });
-            }
-
-            $scope.$watch('user.data.id', (id: string) => {
-                this.getPots(id);
-            });
-
-            //if ($stateParams.id) {
-            //    this.id = $stateParams.id;
-            //    APIService.getUserData(this.id).then((data: op.common.IUser) => {
-            //        this.data = data;
-            //    });
-            //} else if (this.myUser) {
-            //    this.id = this.myUser.id;
-            //    APIService.getUserData(this.id).then((data: op.common.IUser) => {
-            //        this.data = data;
-            //    });
-            //}
         }
 
         getPots(id: string) {
@@ -77,7 +76,8 @@ module op.users {
             var pot = new op.common.Pot({
                 name: this.newName,
                 description: this.newDescription,
-                address: this.newAddress
+                address: this.newAddress,
+                image: this.newImage[0]
             });
             this.APIService.createPot(pot).then((response: string) => {
                 this.$state.transitionTo('user.list');
@@ -106,6 +106,11 @@ module op.users {
                         this.$log.debug(reason)
                     })
                 });
+        }
+
+        fileDropped($files: Array<File>, $event: ng.IAngularEvent, $rejectedFiles: Array<File>): void {
+            this.$log.debug($files);
+            this.$log.debug($rejectedFiles);
         }
     }
 

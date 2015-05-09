@@ -1,41 +1,60 @@
-<h1>
-    <span>Új hírdetés</span>
-</h1>
-<section class="form">
-    <md-content>
-        <form name="newpotForm" novalidate>
-            <md-input-container>
-                <label for="newName">Név</label>
-                <input id="newName" type="text" name="newName" ng-model="user.newName" required>
-                <div ng-messages="newpotForm.newName.$error" ng-show="newpotForm.newName.$dirty">
-                    <div ng-message="required">Kötelező megadni!</div>
-                </div>
-            </md-input-container>
-            <md-input-container>
-                <label for="newDescription">Leírás</label>
-                <input id="newDescription" type="text" name="newDescription" ng-model="user.newDescription" minlength="20" required>
-                <div ng-messages="newpotForm.newDescription.$error" ng-show="newpotForm.newDescription.$dirty">
-                    <div ng-message="required">Kötelező megadni!</div>
-                    <div ng-message="minlength">Túl rövid!</div>
-                </div>
-            </md-input-container>
-            <md-input-container>
-                <label for="newAddress">Cím</label>
-                <input id="newAddress" type="text" name="newAddress" ng-model="user.newAddress" required>
-                <div ng-messages="newpotForm.newAddress.$error" ng-show="newpotForm.newAddress.$dirty">
-                    <div ng-message="required">Kötelező megadni!</div>
-                </div>
-            </md-input-container>
-        </form>
-        <div class="error-container">
-            <span class="error" ng-show="user.error">Helytelen adatok.</span>
-        </div>
-    </md-content>
-    <div class="md-actions">
-        <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid">OK</md-button>
-    </div>
-</section>
+<div class="new-pot">
+    <h1>
+        <span>Új hírdetés</span>
+    </h1>
+    <section class="form">
+        <div layout="row" class="row">
+            <md-content flex="60">
+                <form name="newpotForm" novalidate>
+                    <md-input-container>
+                        <label for="newName">Név</label>
+                        <input id="newName" type="text" name="newName" ng-model="user.newName" required>
 
-<md-button class="md-fab" aria-label="Go back" ng-click="user.goToList()">
-    <i class="fa fa-minus"></i>
-</md-button>
+                        <div ng-messages="newpotForm.newName.$error" ng-show="newpotForm.newName.$dirty">
+                            <div ng-message="required">Kötelező megadni!</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container>
+                        <label for="newDescription">Leírás</label>
+                        <input id="newDescription" type="text" name="newDescription" ng-model="user.newDescription"
+                               minlength="20" required>
+
+                        <div ng-messages="newpotForm.newDescription.$error" ng-show="newpotForm.newDescription.$dirty">
+                            <div ng-message="required">Kötelező megadni!</div>
+                            <div ng-message="minlength">Túl rövid!</div>
+                        </div>
+                    </md-input-container>
+                    <md-input-container>
+                        <label for="newAddress">Cím</label>
+                        <input id="newAddress" type="text" name="newAddress" ng-model="user.newAddress" required>
+
+                        <div ng-messages="newpotForm.newAddress.$error" ng-show="newpotForm.newAddress.$dirty">
+                            <div ng-message="required">Kötelező megadni!</div>
+                        </div>
+                    </md-input-container>
+                </form>
+                <div class="error-container">
+                    <span class="error" ng-show="user.error">Helytelen adatok.</span>
+                </div>
+            </md-content>
+            <div class="drop-box" flex ngf-drop ngf-select ng-model="user.newImage"
+                 ngf-change="user.fileDropped($files, $event, $rejectedFiles)"
+                 ngf-drag-over-class="dragover"
+                 ngf-accept="'image/*'"
+                 ngf-max-size='100000000'>
+                <i class="fa fa-camera fa-2x"></i>
+                <div class="image-container">
+                    <img ngf-src="user.newImage[0]" ngf-accept="'image/*'">
+                </div>
+            </div>
+        </div>
+
+        <div class="md-actions">
+            <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid">OK</md-button>
+        </div>
+    </section>
+
+    <md-button class="md-fab" aria-label="Go back" ng-click="user.goToList()">
+        <i class="fa fa-minus"></i>
+    </md-button>
+</div>

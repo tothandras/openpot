@@ -14,8 +14,7 @@ module op.common {
         tokenObject: IToken;
 
         /* @ngInject */
-        constructor(
-                    public $rootScope: ng.IRootScopeService,
+        constructor(public $rootScope: ng.IRootScopeService,
                     public $state: ng.ui.IStateService,
                     public $q: ng.IQService,
                     public localStorageService: ng.local.storage.ILocalStorageService<IToken>,
@@ -59,7 +58,6 @@ module op.common {
         }
     }
 
-    // register SessionService
     angular.module('op.common')
         .service('SessionService', SessionService);
 }

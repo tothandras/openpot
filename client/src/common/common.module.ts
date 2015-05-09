@@ -5,6 +5,7 @@ module op.toolbar {
         /* Core */
         'ngMaterial',
         /* Third party */
-        'LocalStorageModule'
+        'LocalStorageModule',
+        'ngFileUpload'
     ]);
 }

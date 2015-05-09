@@ -1,6 +1,9 @@
 package main
 
 import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/base64"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -13,6 +16,8 @@ import (
 	"github.com/GeertJohan/go.rice"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/julienschmidt/httprouter"
+	"github.com/mitchellh/goamz/aws"
+	"github.com/mitchellh/goamz/s3"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -78,6 +83,17 @@ type Pot struct {
 //	Timestamp time.Time     `json:"time"`
 //}
 
+type S3Policy struct {
+	Expiration string        `json:"expiration"`
+	Conditions []interface{} `json:"conditions"`
+}
+
+type S3Object struct {
+	Policy    string `json:"policy"`
+	Signature string `json:"signature"`
+	Key       string `json:"key"`
+}
+
 func init() {
 	privateKey, _ = ioutil.ReadFile("/keys/app.rsa")
 	flag.Parse()
@@ -105,7 +121,7 @@ func verify(r *http.Request) (*User, error) {
 		return nil, fmt.Errorf("Token is not valid")
 	}
 
-//  fmt.Printf(user.ID.String())
+	//  fmt.Printf(user.ID.String())
 	return &user, nil
 }
 
@@ -238,8 +254,10 @@ func GETUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, string(b))
+		return
+	}
 
-	} else {
+	if len(id) == 24 {
 		user := User{}
 		err := userCollection.FindId(bson.ObjectIdHex(id)).One(&user)
 		if err != nil {
@@ -258,8 +276,12 @@ func GETUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, string(b))
-
+		return
 	}
+
+	w.WriteHeader(http.StatusBadRequest)
+	fmt.Fprintf(w, "Invalid ID")
+	return
 }
 
 func POSTUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -337,35 +359,35 @@ func GETPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func DELETEPot(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
-  user, err := verify(r)
+	user, err := verify(r)
 
-  if err != nil {
-    w.WriteHeader(http.StatusUnauthorized)
-    return
-  }
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
-  id := p.ByName("id")
-  if id == "" {
-    w.WriteHeader(http.StatusBadRequest)
-    return
-  }
+	id := p.ByName("id")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-  pot := &Pot{}
-  potCollection.FindId(bson.ObjectIdHex(id)).One(pot)
+	pot := &Pot{}
+	potCollection.FindId(bson.ObjectIdHex(id)).One(pot)
 
-  if pot.Cook != user.ID {
-    w.WriteHeader(http.StatusBadRequest)
-    fmt.Fprintf(w, "The authorized user is not the cook of the pot")
-    return
-  }
+	if pot.Cook != user.ID {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "The authorized user is not the cook of the pot")
+		return
+	}
 
-  err = potCollection.RemoveId(bson.ObjectIdHex(id))
-  if err != nil {
-    w.WriteHeader(http.StatusInternalServerError)
-    return
-  }
+	err = potCollection.RemoveId(bson.ObjectIdHex(id))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-  w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusOK)
 }
 
 func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -397,6 +419,8 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	}
 	pot.Cook = user.ID
 
+	id := bson.NewObjectId()
+	pot.ID = id
 	err = potCollection.Insert(pot)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -404,7 +428,53 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
+	fmt.Fprintf(w, id.Hex())
 	w.WriteHeader(http.StatusOK)
+}
+
+func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	auth, err := aws.EnvAuth()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//  s3Connection := s3.New(auth, aws.EUCentral)
+	conditions := make([]interface{}, 0)
+  conditions = append(conditions, map[string]string{"bucket": "openpot1"})
+	conditions = append(conditions, map[string]s3.ACL{"acl": s3.PublicRead})
+  conditions = append(conditions, []string{"starts-with", "$key", ""})
+	conditions = append(conditions, []string{"starts-with", "$Content-Type", "image/"})
+  conditions = append(conditions, []string{"starts-with", "$filename", ""})
+
+	s3Policy, err := json.Marshal(S3Policy{
+		Expiration: time.Now().Add(time.Hour * 48).UTC().Format(time.RFC3339),
+		Conditions: conditions,
+	})
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	s3PolicyBase64 := base64.StdEncoding.EncodeToString(s3Policy)
+
+	mac := hmac.New(sha1.New, []byte(auth.SecretKey))
+	mac.Write([]byte(s3PolicyBase64))
+
+	policy := S3Object{
+		Policy:    s3PolicyBase64,
+		Signature: base64.StdEncoding.EncodeToString(mac.Sum(nil)),
+		Key:       auth.AccessKey,
+	}
+
+	jsonPolicy, err := json.Marshal(policy)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, string(jsonPolicy))
 }
 
 func handleFiles(w http.ResponseWriter, r *http.Request) {
@@ -451,7 +521,9 @@ func main() {
 	router.GET("/api/user/:id/pot", GETPot)
 	router.GET("/api/pot", GETPot)
 	router.POST("/api/pot", POSTPot)
-  router.DELETE("/api/pot/:id", DELETEPot)
+	router.DELETE("/api/pot/:id", DELETEPot)
+
+	router.GET("/api/s3policy", GETS3Policy)
 
 	// Handle files otherwise
 	router.NotFound = handleFiles
