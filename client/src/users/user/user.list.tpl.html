@@ -1,5 +1,6 @@
 <div class="list">
     <md-card class="pot" ng-repeat="pot in user.pots track by pot.id">
+        <img ng-src="{{user.S3.url + pot.id + '.jpg'}}" alt=""/>
         <h2>{{pot.name}}</h2>
         <p>
             {{pot.description}}
@@ -8,4 +9,7 @@
             <i class="fa fa-times"></i>
         </md-button>
     </md-card>
+    <md-button class="md-fab" aria-label="Add new" ng-click="user.goToNewpot()" ng-show="user.myUser">
+        <i class="fa fa-plus"></i>
+    </md-button>
 </div>

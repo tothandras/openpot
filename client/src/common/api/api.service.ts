@@ -18,15 +18,7 @@ module op.common {
                     public API_URL: string,
                     public Upload: any,
                     public S3: S3) {
-            $log.debug(S3);
 
-            var requestConfig: ng.IRequestConfig = {
-                method: 'GET',
-                url: this.API_URL + '/s3policy'
-            };
-            $http(requestConfig).success((response: any) => {
-                $log.debug(response);
-            });
         }
 
         getUserData(id: string): ng.IPromise<IUser> {
@@ -109,23 +101,26 @@ module op.common {
                 .success((id: string) => {
                     // Upload image to S3
                     var filename = id + '.' + pot.image.name.split('.').pop();
-                    this.$log.debug(filename);
+
                     this.Upload.upload({
-                        url: 'https://openpot.s3.amazonaws.com/',
+                        url: this.S3.url,
                         method: 'POST',
                         fields : {
                             key: filename, // the key to store the file on S3, could be file name or customized
-                            AWSAccessKeyId: '',
-                            acl: this.S3.acl, // sets the access to the uploaded file in the bucket: private or public
-                            policy: this.S3.policy, // base64-encoded json policy (see article below)
-                            signature: this.S3.signature, // base64-encoded signature based on policy string (see article below)
-                            "Content-Type": pot.image.type, // content type of the file (NotEmpty)
+                            AWSAccessKeyId: this.S3.key, // AWS access key
+                            acl: this.S3.acl, // sets the access to the uploaded file in the bucket
+                            policy: this.S3.policy, // base64-encoded json policy
+                            signature: this.S3.signature, // base64-encoded signature based on policy string
+                            "Content-Type": pot.image.type,
                             filename: filename // this is needed for Flash polyfill IE8-9
                         },
                         file: pot.image
+                    }).then((response: string) => {
+                        deferred.resolve(id);
+                    }, (reason: string) => {
+                        this.deletePot(id);
+                        deferred.reject(reason);
                     });
-
-                    deferred.resolve(id);
                 })
                 .error((response: string) => deferred.reject(response));
 

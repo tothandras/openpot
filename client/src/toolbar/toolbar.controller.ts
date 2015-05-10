@@ -22,7 +22,6 @@ module op.toolbar {
                     public LoginDialogService: op.login.ILoginDialogService,
                     public RegisterDialogService: op.register.IRegisterDialogService,
                     public SessionService: op.common.ISessionService) {
-            $log.debug(this.name);
             SessionService.getUser().then((user: op.common.IUser) => {
                 this.user = user;
             });

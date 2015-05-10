@@ -29,7 +29,8 @@ module op.users {
                     md5: any,
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
-                    LoginDialogService: op.login.ILoginDialogService) {
+                    LoginDialogService: op.login.ILoginDialogService,
+                    public S3: op.common.S3) {
 
             var id: string = $stateParams.id;
             SessionService.getUser().then((sessionUser: op.common.IUser) => {
@@ -82,6 +83,11 @@ module op.users {
             this.APIService.createPot(pot).then((response: string) => {
                 this.$state.transitionTo('user.list');
                 this.getPots(this.data.id);
+
+                this.newName = '';
+                this.newDescription = '';
+                this.newAddress = '';
+                this.newImage = null;
             });
         }
 

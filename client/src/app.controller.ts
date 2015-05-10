@@ -14,8 +14,6 @@ module op {
         /* @ngInject */
         constructor($scope: ng.IScope,
                     $log: ng.ILogService) {
-            $log.debug(this.name);
-
             $scope.$on('$stateChangeSuccess', (e: ng.IAngularEvent, toState: ng.ui.IState) => {
                 if (angular.isDefined(toState.data.title)) {
                     this.title = this.titlePrefix + ' | ' + toState.data.title;

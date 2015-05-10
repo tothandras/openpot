@@ -92,6 +92,7 @@ type S3Object struct {
 	Policy    string `json:"policy"`
 	Signature string `json:"signature"`
 	Key       string `json:"key"`
+	URL       string `json:"url"`
 }
 
 func init() {
@@ -133,8 +134,6 @@ func private(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-
-	w.WriteHeader(http.StatusOK)
 
 	b, err := json.Marshal(*user)
 	if err != nil {
@@ -189,7 +188,6 @@ func register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, "OK")
-	return
 }
 
 func login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -428,8 +426,8 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	fmt.Fprintf(w, id.Hex())
 	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, id.Hex())
 }
 
 func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -440,11 +438,11 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	//  s3Connection := s3.New(auth, aws.EUCentral)
 	conditions := make([]interface{}, 0)
-  conditions = append(conditions, map[string]string{"bucket": "openpot1"})
+	conditions = append(conditions, map[string]string{"bucket": "openpot1"})
 	conditions = append(conditions, map[string]s3.ACL{"acl": s3.PublicRead})
-  conditions = append(conditions, []string{"starts-with", "$key", ""})
+	conditions = append(conditions, []string{"starts-with", "$key", ""})
 	conditions = append(conditions, []string{"starts-with", "$Content-Type", "image/"})
-  conditions = append(conditions, []string{"starts-with", "$filename", ""})
+	conditions = append(conditions, []string{"starts-with", "$filename", ""})
 
 	s3Policy, err := json.Marshal(S3Policy{
 		Expiration: time.Now().Add(time.Hour * 48).UTC().Format(time.RFC3339),
@@ -465,6 +463,7 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		Policy:    s3PolicyBase64,
 		Signature: base64.StdEncoding.EncodeToString(mac.Sum(nil)),
 		Key:       auth.AccessKey,
+		URL:       "https://openpot1.s3-eu-west-1.amazonaws.com/",
 	}
 
 	jsonPolicy, err := json.Marshal(policy)
@@ -473,6 +472,7 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		log.Print(err)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintf(w, string(jsonPolicy))
 }

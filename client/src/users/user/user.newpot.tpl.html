@@ -50,7 +50,7 @@
         </div>
 
         <div class="md-actions">
-            <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid">OK</md-button>
+            <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid || !user.newImage">OK</md-button>
         </div>
     </section>
 

@@ -1,16 +1,27 @@
 module op.common {
     export class S3 {
-        AWSAccessKeyId: string;
+        key: string;
         acl: string;
         policy: string;
         signature: string;
+        url: string;
 
-        constructor() {
+        /* @ngInject */
+        constructor($log: ng.ILogService, $http: ng.IHttpService, API_URL: string) {
+            var requestConfig: ng.IRequestConfig = {
+                method: 'GET',
+                url: API_URL + '/s3policy'
+            };
+            $http(requestConfig).success((response: any) => {
+                this.policy = response.policy;
+                this.signature = response.signature;
+                this.key = response.key;
+                this.url = response.url;
+            });
             this.acl = 'public-read';
-            this.AWSAccessKeyId = '';
         }
     }
 
     angular.module('op.common')
-        .value('S3', new S3())
+        .service('S3', S3)
 }
