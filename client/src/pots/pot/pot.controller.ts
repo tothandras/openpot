@@ -13,7 +13,8 @@ module op.pots {
         /* @ngInject */
         constructor($log: ng.ILogService,
                     public GravatarService: op.common.GravatarService,
-                    public APIService: op.common.IAPIService) {
+                    public APIService: op.common.IAPIService,
+                    public S3: op.common.S3) {
 
         }
 

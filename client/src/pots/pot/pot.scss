@@ -47,6 +47,8 @@
             left: 0;
             bottom: 0;
             padding-left: 30px;
+            padding-right: 30px;
+            overflow: hidden;
 
             h2 {
                 margin-top: 10px;
@@ -59,15 +61,6 @@
                 margin: 0;
                 font-size: 0.8em;
             }
-        }
-
-        .delete-button {
-            position: absolute;
-            width: 30px;
-            top: 2%;
-            right: 2%;
-            color: rgb(255, 64, 129);
-            //background: #ffffff;
         }
     }
 }

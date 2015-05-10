@@ -27,8 +27,6 @@ module op.pots {
                     LocationService: op.common.ILocationService,
                     uiGmapGoogleMapApi: any) {
 
-            $log.debug(this.name);
-
             uiGmapGoogleMapApi.then((maps: any) => {
                 this.map = {
                     center: LocationService.getLastLocation(),

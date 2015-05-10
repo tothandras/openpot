@@ -1,6 +1,6 @@
 <div class="list">
     <div layout="row" layout-wrap>
-        <div class="wrapper" ng-repeat="pot in user.pots track by pot.id" flex="50">
+        <div ng-repeat="pot in user.pots track by pot.id" flex="50" layout-padding>
             <md-card class="pot">
                 <div class="image" ng-style="{'background-image':'url({{user.S3.url + pot.id + '.jpg'}})'}"></div>
                 <div class="text">
