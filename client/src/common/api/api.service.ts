@@ -111,7 +111,7 @@ module op.common {
                             acl: this.S3.acl, // sets the access to the uploaded file in the bucket
                             policy: this.S3.policy, // base64-encoded json policy
                             signature: this.S3.signature, // base64-encoded signature based on policy string
-                            "Content-Type": pot.image.type,
+                            'Content-Type': pot.image.type,
                             filename: filename // this is needed for Flash polyfill IE8-9
                         },
                         file: pot.image
