@@ -9,7 +9,7 @@ module op.pots {
         controller: string = 'PotController';
         controllerAs: string = 'pot';
         bindToController: boolean = true;
-        templateUrl: string = 'pot.tpl.html';
+        templateUrl: string = 'pot-sm.tpl.html';
         transclude: boolean = false;
 
         static instance(): PotDirective {
@@ -18,5 +18,5 @@ module op.pots {
     }
 
     angular.module('op.pots')
-        .directive('opPot', PotDirective.instance);
+        .directive('opPotSm', PotDirective.instance);
 }

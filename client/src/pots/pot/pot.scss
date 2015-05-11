@@ -1,27 +1,66 @@
 .pot {
-    position: relative;
-    padding-left: 50px;
+    &.sm {
+        position: relative;
+        padding-left: 50px;
 
-    h2 {
-        cursor: pointer;
+        h2 {
+            cursor: pointer;
+        }
+
+        .img-container {
+            width: 50px;
+            height: 50px;
+        }
+
+        .details {
+            height: 90px;
+            overflow: hidden;
+        }
+
+        .details.ng-hide-add.ng-hide-add-active,
+        .details.ng-hide-remove.ng-hide-remove-active {
+            transition: all linear 0.2s;
+        }
+
+        .details.ng-hide {
+            height: 0;
+        }
     }
 
-    .img-container {
-        width: 50px;
-        height: 50px;
-    }
+    &.bg {
+        position: relative;
+        height: 300px;
 
-    .details {
-        height: 90px;
-        overflow: hidden;
-    }
+        .image {
+            position: absolute;
+            height: 80%;
+            width: 98%;
+            left: 1%;
+            top: 1%;
+            background-size: cover;
+        }
 
-    .details.ng-hide-add.ng-hide-add-active,
-    .details.ng-hide-remove.ng-hide-remove-active {
-        transition: all linear 0.2s;
-    }
+        .text {
+            position: absolute;
+            height: 20%;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            padding-left: 30px;
+            padding-right: 30px;
+            overflow: hidden;
 
-    .details.ng-hide {
-        height: 0;
+            h2 {
+                margin-top: 10px;
+                margin-bottom: 0;
+                font-size: 1.2em;
+                font-weight: 400;
+            }
+
+            p {
+                margin: 0;
+                font-size: 0.8em;
+            }
+        }
     }
 }

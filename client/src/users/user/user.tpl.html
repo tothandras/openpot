@@ -5,6 +5,18 @@
                 <img ng-src="{{::user.data.image}}" alt="" class="circle responsive-image"/>
             </div>
             <h2 class="firstName">{{::user.data.firstName}}</h2>
+
+            <h3 class="lastName">{{::user.data.lastName}}</h3>
+
+            <div ng-switch on="user.data.stars">
+                <p ng-switch-when="0">
+                    <i class="fa fa-star-o"></i>
+                </p>
+
+                <p ng-switch-default>
+                    <i class="fa fa-star" ng-repeat="star in app.range(user.data.stars)"></i>
+                </p>
+            </div>
         </div>
         <div flex class="subview" ui-view></div>
     </div>

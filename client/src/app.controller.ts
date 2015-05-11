@@ -20,6 +20,10 @@ module op {
                 }
             });
         }
+
+        range(n: number): Array<number> {
+            return new Array(n);
+        }
     }
 
     angular.module('op')
