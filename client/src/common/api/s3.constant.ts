@@ -5,6 +5,7 @@ module op.common {
         policy: string;
         signature: string;
         url: string;
+        cdn: string;
 
         /* @ngInject */
         constructor($log: ng.ILogService, $http: ng.IHttpService, API_URL: string) {
@@ -17,6 +18,7 @@ module op.common {
                 this.signature = response.signature;
                 this.key = response.key;
                 this.url = response.url;
+                this.cdn = response.cdn;
             });
             this.acl = 'public-read';
         }

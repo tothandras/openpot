@@ -93,6 +93,7 @@ type S3Object struct {
 	Signature string `json:"signature"`
 	Key       string `json:"key"`
 	URL       string `json:"url"`
+	CDN       string `json:"cdn"`
 }
 
 func init() {
@@ -464,6 +465,7 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		Signature: base64.StdEncoding.EncodeToString(mac.Sum(nil)),
 		Key:       auth.AccessKey,
 		URL:       "https://openpot1.s3-eu-west-1.amazonaws.com/",
+		CDN:       "https://d1f0mp28tfo8uk.cloudfront.net/",
 	}
 
 	jsonPolicy, err := json.Marshal(policy)

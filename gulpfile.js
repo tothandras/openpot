@@ -43,7 +43,8 @@ config.paths = {
     build: 'static',
     script: 'script',
     style: 'style',
-    font: 'fonts'
+    font: 'fonts',
+    image: 'image'
 };
 config.files = {
     index: config.paths.client + '/' + 'src/index.html',
@@ -56,7 +57,8 @@ config.files = {
         typings: [config.paths.client + '/' + 'typings/**/*.d.ts'],
         test: [config.paths.client + '/' + 'src/**/*.test.ts']
     },
-    sass: config.paths.client + '/' + 'src/**/*.scss'
+    sass: config.paths.client + '/' + 'src/**/*.scss',
+    image: config.paths.client + '/' + 'src/**/*.{jpg,png}'
 };
 config.karma = {
     action: 'run',
@@ -68,15 +70,15 @@ config.karma = {
 config.port = '8030';
 
 /** tasks */
-gulp.task('clean', function() {
-    p.del(config.paths.build, function(err) {
+gulp.task('clean', function () {
+    p.del(config.paths.build, function (err) {
         if (err != null) {
             p.util.log(err);
         }
     });
 });
 
-gulp.task('lint-ts', function() {
+gulp.task('lint-ts', function () {
     var tsFiles = config.files.typescript.src
         .concat(config.files.typescript.test);
 
@@ -86,7 +88,7 @@ gulp.task('lint-ts', function() {
         .pipe(p.tslint.report('full'));
 });
 
-gulp.task('build-ts', ['lint-ts'], function() {
+gulp.task('build-ts', ['lint-ts'], function () {
     var tsFiles = config.files.typescript.src
         .concat(config.files.typescript.typings);
 
@@ -103,12 +105,12 @@ gulp.task('build-ts', ['lint-ts'], function() {
 
     // config
     var cfg = p.ngConstant({
-            name: 'config',
-            constants: {
-                RELEASE: IS_RELEASE_BUILD
-            },
-            stream: true
-        });
+        name: 'config',
+        constants: {
+            RELEASE: IS_RELEASE_BUILD
+        },
+        stream: true
+    });
 
     // template
     var tpl = gulp.src(config.files.template)
@@ -142,10 +144,10 @@ gulp.task('build-ts', ['lint-ts'], function() {
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
         .pipe(gulp.dest(config.paths.script, {cwd: config.paths.build}))
-        .pipe(reload({stream:true}));
+        .pipe(reload({stream: true}));
 });
 
-gulp.task('build-lib', function() {
+gulp.task('build-lib', function () {
     var bowerFiles = gulp.src(p.mainBowerFiles({
         env: IS_RELEASE_BUILD ? 'production' : 'development'
     }));
@@ -179,10 +181,10 @@ gulp.task('build-lib', function() {
         .pipe(gulp.dest(config.paths.font, {cwd: config.paths.build}));
 
     return p.mergeStream(js, css, font)
-        .pipe(reload({stream:true}));
+        .pipe(reload({stream: true}));
 });
 
-gulp.task('build-sass', function() {
+gulp.task('build-sass', function () {
     return gulp.src(config.files.sass)
         .pipe(p.plumber())
         .pipe(p.sourcemaps.init())
@@ -200,10 +202,10 @@ gulp.task('build-sass', function() {
         .pipe(p.insert.prepend(config.banner))
         .pipe(IS_RELEASE_BUILD ? p.rev() : p.sourcemaps.write())
         .pipe(gulp.dest(config.paths.style, {cwd: config.paths.build}))
-        .pipe(reload({stream:true}));
+        .pipe(reload({stream: true}));
 });
 
-gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function() {
+gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function () {
     var files = gulp.src([
         '**/lib*.js',
         '**/scripts*.js',
@@ -212,12 +214,21 @@ gulp.task('build-index', ['build-ts', 'build-sass', 'build-lib'], function() {
     return gulp.src(config.files.index)
         .pipe(p.inject(files, {addRootSlash: false}))
         .pipe(gulp.dest(config.paths.build))
-        .pipe(reload({stream:true}));
+        .pipe(reload({stream: true}));
 });
 
-gulp.task('build', ['build-ts', 'build-sass', 'build-lib', 'build-index']);
+gulp.task('min-image', function () {
+    return gulp.src(config.files.image)
+        .pipe(p.plumber())
+        .pipe(p.flatten())
+        //.pipe(p.imagemin({progressive: true}))
+        .pipe(gulp.dest(config.paths.image, {cwd: config.paths.build}))
+        .pipe(reload({stream: true}));
+});
 
-gulp.task('watch', function() {
+gulp.task('build', ['build-ts', 'build-sass', 'build-lib', 'build-index', 'min-image']);
+
+gulp.task('watch', function () {
     if (WATCH) {
         gulp.watch(config.files.typescript.src, ['build-ts']);
         gulp.watch(config.files.typescript.test, ['build-ts']);
@@ -225,16 +236,17 @@ gulp.task('watch', function() {
         gulp.watch(config.files.index, ['build-index']);
         gulp.watch(config.files.sass, ['build-sass']);
         gulp.watch(config.paths.client + '/lib/**', ['build-lib']);
+        gulp.watch(config.paths.image, ['min-image'])
     }
 });
 
-gulp.task('test-karma', ['build-ts', 'build-lib'], function(done){
+gulp.task('test-karma', ['build-ts', 'build-lib'], function (done) {
     if (!IS_RELEASE_BUILD) {
         p.karma.server.start(config.karma, done);
     }
 });
 
-gulp.task('browser-sync', function() {
+gulp.task('browser-sync', function () {
     if (WATCH) {
         browserSync({
             notify: false,

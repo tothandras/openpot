@@ -1,3 +1,16 @@
-<div class="home">
-    <!--<img src="img/home.png" alt="" class="responsive-image">-->
+<div class="home" layout="row" layout-align="center center">
+    <div class="search" layout="row" layout-margin>
+        <md-autocomplete flex="80" flex-order="1"
+                         md-no-cache="false"
+                         md-selected-item="home.selectedItem"
+                         md-search-text="home.searchText"
+                         md-items="item in home.querySearchItems"
+                         md-item-text="item"
+                         md-floating-label="Település">
+            <span md-highlight-text="ctrl.searchText">{{item}}</span>
+        </md-autocomplete>
+        <!--<input type="text" ng-model="home.search" flex="80" flex-order="1"/>-->
+        <md-button class="md-raised md-primary" flex="20" flex-order="2">Keresés</md-button>
+    </div>
+    <img src="image/home.jpg" alt="background" class="responsive-image">
 </div>

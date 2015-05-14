@@ -30,6 +30,7 @@ module op.users {
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
                     LoginDialogService: op.login.ILoginDialogService,
+                    GravatarService: op.common.GravatarService,
                     public S3: op.common.S3) {
 
             var id: string = $stateParams.id;
@@ -39,7 +40,7 @@ module op.users {
                 if (this.myUser) {
                     SessionService.getUser().then((user: op.common.IUser) => {
                         this.data = user;
-                        this.data.image = 'http://www.gravatar.com/avatar/' + md5.createHash(this.data.email || '') + '?d=mm&s=200';
+                        this.data.image = GravatarService.gravatar(this.data.email);
                         this.getPots(this.data.id);
                     });
 
@@ -51,7 +52,7 @@ module op.users {
                 } else {
                     APIService.getUserData(id).then((user: op.common.IUser) => {
                         this.data = user;
-                        this.data.image = 'http://www.gravatar.com/avatar/' + md5.createHash(this.data.email || '') + '?d=mm&s=200';
+                        this.data.image = GravatarService.gravatar(this.data.email);
                         this.getPots(this.data.id);
                     }, (reason: string) => this.$state.transitionTo('home'));
                 }

@@ -1,9 +1,37 @@
 .home {
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 
     div {
         height: 100%;
         width: 100%;
+    }
+
+    .search {
+        width: 50%;
+        height: 57px;
+        z-index: 2;
+
+        input {
+            background-color: #ffffff;
+            border-radius: 3px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    }
+
+    img {
+        position: absolute;
+        min-height: 102%;
+        min-width: 102%;
+        left: -1%;
+        top: -1%;
+        background-size: cover;
+        z-index: 1;
+        filter: blur(3px);
     }
 }

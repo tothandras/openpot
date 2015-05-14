@@ -53,7 +53,7 @@ module op.common {
             this.lastName = obj && obj.lastName || '';
             this.description = obj && obj.description || '';
             this.phone = obj && obj.phone || '';
-            this.stars = obj && obj.stars || 1;
+            this.stars = obj && obj.stars || 0;
             this.following = obj && obj.stars || [];
         }
 

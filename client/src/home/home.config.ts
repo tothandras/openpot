@@ -1,15 +1,15 @@
-module op.pots {
+module op.home {
     'use strict';
 
     /* @ngInject */
     function config(uiGmapGoogleMapApiProvider: any): void {
         uiGmapGoogleMapApiProvider.configure({
-            //    key: 'your api key',
             v: '3.17',
-            libraries: 'geometry,visualization'
+            libraries: 'places',
+            region: 'HU'
         });
     }
 
-    angular.module('op.pots')
+    angular.module('op.home')
         .config(config);
 }

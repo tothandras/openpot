@@ -11,6 +11,7 @@ module op.pots {
             data: {
                 onMenu: true,
                 caption: 'Böngészés',
+                title: 'Böngészés',
                 icon: null
             }
         });

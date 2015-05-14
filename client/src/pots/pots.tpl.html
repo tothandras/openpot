@@ -6,28 +6,30 @@
                 </ui-gmap-markers>
             </ui-gmap-google-map>
         </div>
-        <div ng-if="pots.pots.length === 0" class="no-pots" layout="row" layout-align="center center">
-            <h1>
-                Jelenleg egy szaftos fazék sincs a környéken.
-                <br/>
-                <span>Nézz vissza később!</span>
-            </h1>
-        </div>
-        <div class="list" ng-if="pots.pots.length !== 0">
-            <md-content layout="row" layout-wrap>
-                <form name="search" novalidate flex="100">
-                    <md-input-container>
-                        <label for="name">Név</label>
-                        <input id="name" type="text" ng-model="pots.search"/>
-                    </md-input-container>
-                </form>
-            <div layout-padding ng-repeat="pot in pots.pots | filter:pots.search track by pot.id" flex="50">
-                <op-pot-bg ng-mouseenter="pots.mouseEnter(pot.id)"
-                           ng-mouseleave="pots.mouseLeave(pot.id)"
-                           pot="pot">
-                </op-pot-bg>
+        <div ng-switch="pots.pots.length" flex="65" class="list">
+            <div ng-switch-when="0" class="no-pots" layout="row" layout-align="center center">
+                <h1>
+                    Jelenleg egy szaftos fazék sincs a környéken.
+                    <br/>
+                    <span>Nézz vissza később!</span>
+                </h1>
             </div>
-            </md-content>
+            <div ng-switch-default>
+                <md-content layout="row" layout-wrap>
+                    <form name="search" novalidate flex="100">
+                        <md-input-container>
+                            <label for="name">Név</label>
+                            <input id="name" type="text" ng-model="pots.search"/>
+                        </md-input-container>
+                    </form>
+                    <div layout-padding ng-repeat="pot in pots.pots | filter:pots.search track by pot.id" flex="50">
+                        <op-pot-bg ng-mouseenter="pots.mouseEnter(pot.id)"
+                                   ng-mouseleave="pots.mouseLeave(pot.id)"
+                                   pot="pot">
+                        </op-pot-bg>
+                    </div>
+                </md-content>
+            </div>
         </div>
     </div>
 </div>

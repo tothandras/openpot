@@ -100,7 +100,7 @@ module op.common {
             this.$http(requestConfig)
                 .success((id: string) => {
                     // Upload image to S3
-                    var filename = id + '.' + pot.image.name.split('.').pop();
+                    var filename = id; //+ '.' + pot.image.name.split('.').pop();
 
                     this.Upload.upload({
                         url: this.S3.url,

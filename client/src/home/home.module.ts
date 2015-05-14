@@ -6,6 +6,7 @@ module op.home {
         /* App */
         // 'op.common',
         /* Third party */
-        'ui.router'
+        'ui.router',
+        'uiGmapgoogle-maps'
     ]);
 }

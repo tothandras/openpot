@@ -32,6 +32,17 @@
                             <div ng-message="required">Kötelező megadni!</div>
                         </div>
                     </md-input-container>
+                    <!--<md-chips ng-model="ctrl.selectedVegetables" md-autocomplete-snap md-require-match>-->
+                        <!--<md-autocomplete-->
+                            <!--md-selected-item="ctrl.selectedItem"-->
+                            <!--md-search-text="ctrl.searchText"-->
+                            <!--md-items="item in ctrl.querySearch(ctrl.searchText)"-->
+                            <!--md-item-text="item.name"-->
+                            <!--placeholder="Search for a vegetable">-->
+                            <!--<span md-highlight-text="ctrl.searchText">{{item.name}}</span>-->
+                        <!--</md-autocomplete>-->
+                        <!--<md-chip>{{$chip.name}}</md-chip>-->
+                    <!--</md-chips>-->
                 </form>
                 <div class="error-container">
                     <span class="error" ng-show="user.error">Helytelen adatok.</span>
@@ -43,6 +54,7 @@
                  ngf-accept="'image/*'"
                  ngf-max-size='100000000'>
                 <i class="fa fa-camera fa-2x"></i>
+
                 <div class="image-container">
                     <img ngf-src="user.newImage[0]" ngf-accept="'image/*'">
                 </div>
@@ -50,7 +62,9 @@
         </div>
 
         <div class="md-actions">
-            <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid || !user.newImage">OK</md-button>
+            <md-button class="md-primary" ng-click="user.newPot()" ng-disabled="newpotForm.$invalid || !user.newImage">
+                OK
+            </md-button>
         </div>
     </section>
 

@@ -2,7 +2,7 @@
     <div layout="row" layout-wrap>
         <div ng-repeat="pot in user.pots track by pot.id" flex="50" layout-padding>
             <md-card class="pot">
-                <div class="image" ng-style="{'background-image':'url({{user.S3.url + pot.id + '.jpg'}})'}"></div>
+                <div class="image" ng-style="{'background-image':'url({{user.S3.cdn + pot.id}})'}"></div>
                 <div class="text">
                     <h2>{{pot.name}}</h2>
                     <p>

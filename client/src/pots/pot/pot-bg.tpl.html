@@ -1,9 +1,14 @@
 <md-card class="pot bg" ng-class="{'md-whiteframe-z2': pot.mouse}" ng-mouseenter="pot.mouse = true" ng-mouseleave="pot.mouse = false">
-    <div class="image" ng-style="{'background-image':'url({{pot.S3.url + pot.pot.id + '.jpg'}})'}"></div>
+    <div class="image" ng-style="{'background-image':'url({{pot.S3.cdn + pot.pot.id}})'}"></div>
     <div class="text">
         <h2>{{pot.pot.name}}</h2>
         <p>
             {{pot.pot.description}} - {{pot.pot.address}}
         </p>
+    </div>
+    <div class="img-container">
+        <a ng-href="{{'user/' + pot.user.id}}">
+            <img ng-src="{{::pot.user.image}}" alt="" class="circle responsive-image"/>
+        </a>
     </div>
 </md-card>
