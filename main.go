@@ -411,6 +411,18 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
+  if pot.ID != "" {
+    err = potCollection.UpdateId(pot.ID, pot);
+    if err != nil {
+      w.WriteHeader(http.StatusInternalServerError)
+      log.Print(err)
+      return
+    }
+
+    w.WriteHeader(http.StatusOK)
+    return
+  }
+
 	if pot.Name == "" || pot.Description == "" || pot.Address == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "Required fields missing")
@@ -481,7 +493,7 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func handleFiles(w http.ResponseWriter, r *http.Request) {
 	box := rice.MustFindBox("static")
-	url := r.URL.String()
+  url := r.URL.Path
 	if strings.Contains(url, ".") {
 		url = "/"
 	}

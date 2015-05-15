@@ -3,6 +3,7 @@ module op.home {
 
     export interface IHomeScope {
         name: string;
+        search: () => void;
     }
 
     class HomeController implements IHomeScope {
@@ -12,7 +13,10 @@ module op.home {
         querySearchItems: Array<string> = [];
 
         /* @ngInject */
-        constructor($log: ng.ILogService, $scope: ng.IScope, public uiGmapGoogleMapApi: any) {
+        constructor($log: ng.ILogService,
+                    $scope: ng.IScope,
+                    public $state: ng.ui.IStateService,
+                    public uiGmapGoogleMapApi: any) {
             this.uiGmapGoogleMapApi.then((maps: any) => {
                 var autocompleteService = new maps.places.AutocompleteService();
                 $scope.$watch('home.searchText', () => {
@@ -26,7 +30,6 @@ module op.home {
                         componentRestrictions: {country: 'hu'}
                     }, (prediction: any, status: any) => {
                         if (status === 'OK') {
-                            $log.debug(prediction);
                             this.querySearchItems = prediction.map((p: any) => p.terms[0].value);
                         }
                     });
@@ -34,8 +37,8 @@ module op.home {
             });
         }
 
-        querySearch(searchText: string): any {
-
+        search(): void {
+            this.$state.transitionTo('pots', {search: this.searchText});
         }
     }
 

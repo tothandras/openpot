@@ -15,18 +15,29 @@
                 </h1>
             </div>
             <div ng-switch-default>
-                <md-content layout="row" layout-wrap>
+                <md-content layout="row" layout-wrap layout-padding>
                     <form name="search" novalidate flex="100">
                         <md-input-container>
-                            <label for="name">Név</label>
+                            <label for="name">Keresés</label>
                             <input id="name" type="text" ng-model="pots.search"/>
                         </md-input-container>
                     </form>
-                    <div layout-padding ng-repeat="pot in pots.pots | filter:pots.search track by pot.id" flex="50">
-                        <op-pot-bg ng-mouseenter="pots.mouseEnter(pot.id)"
-                                   ng-mouseleave="pots.mouseLeave(pot.id)"
-                                   pot="pot">
-                        </op-pot-bg>
+                    <div class="flip" layout-padding ng-repeat="pot in pots.pots | filter:pots.search track by pot.id" flex="50">
+                        <div class="card" ng-class="{'flipped': pot.isFlipped && !!pots.user.email}" ng-click="pot.isFlipped=!pot.isFlipped">
+                            <div class="face front">
+                                <op-pot-bg ng-mouseenter="pots.mouseEnter(pot.id)"
+                                           ng-mouseleave="pots.mouseLeave(pot.id)"
+                                           pot="pot">
+                                </op-pot-bg>
+                            </div>
+                            <div class="face back">
+                                <md-card layout="column" layout-align="center center">
+                                    <md-content>
+                                        <md-button class="md-primary" ng-click="pots.reserve(pot.id)">Jelentkezés</md-button>
+                                    </md-content>
+                                </md-card>
+                            </div>
+                        </div>
                     </div>
                 </md-content>
             </div>

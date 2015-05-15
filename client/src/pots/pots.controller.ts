@@ -6,6 +6,7 @@ module op.pots {
         map: any;
         markers: IMarker[];
         mouseEnter: (id: string) => void;
+        reserve: (id: string) => void;
     }
 
     export interface IMarker {
@@ -15,17 +16,26 @@ module op.pots {
         title: string;
     }
 
+    interface StateParams {
+        search?: string;
+    }
+
     class PotsController implements IPotsScope {
         name: string = 'Pots Controller';
         pots: op.common.IPot[] = [];
         map: any;
         markers: IMarker[] = [];
+        user: op.common.IUser;
 
         /* @ngInject */
         constructor($log: ng.ILogService,
+                    $stateParams: StateParams,
                     APIService: op.common.IAPIService,
                     LocationService: op.common.ILocationService,
+                    SessionService: op.common.ISessionService,
                     uiGmapGoogleMapApi: any) {
+
+            SessionService.getUser().then((user: op.common.IUser) => this.user = user);
 
             uiGmapGoogleMapApi.then((maps: any) => {
                 this.map = {
@@ -49,8 +59,14 @@ module op.pots {
             });
 
             APIService.getPots().then((pots: op.common.IPot[]) => {
+                if ($stateParams.search && $stateParams.search !== '') {
+                    pots = pots.filter((pot: op.common.IPot) => pot.address.indexOf($stateParams.search) > -1);
+                    LocationService.geocode($stateParams.search).then((location: op.common.Location) => {
+                        this.map.center = location;
+                    });
+                }
                 this.pots = pots;
-                pots.forEach((p: op.common.IPot) => {
+                this.pots.forEach((p: op.common.IPot) => {
                     LocationService.geocode(p.address).then((location: op.common.Location) => {
                         var m: IMarker = {
                             id: p.id,
@@ -71,6 +87,11 @@ module op.pots {
                     this.map.center = new op.common.Location(m.latitude, m.longitude);
                 }
             }
+        }
+
+
+        reserve(id: string): void {
+
         }
     }
 

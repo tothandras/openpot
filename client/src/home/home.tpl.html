@@ -7,10 +7,12 @@
                          md-items="item in home.querySearchItems"
                          md-item-text="item"
                          md-floating-label="Település">
-            <span md-highlight-text="ctrl.searchText">{{item}}</span>
+            <span md-highlight-text="user.searchText">{{item}}</span>
         </md-autocomplete>
-        <!--<input type="text" ng-model="home.search" flex="80" flex-order="1"/>-->
-        <md-button class="md-raised md-primary" flex="20" flex-order="2">Keresés</md-button>
+        <md-button class="md-raised md-primary" flex="20" flex-order="2"
+            ng-click="home.search()">
+            Keresés
+        </md-button>
     </div>
     <img src="image/home.jpg" alt="background" class="responsive-image">
 </div>

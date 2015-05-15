@@ -4,7 +4,7 @@ module op.pots {
     /* @ngInject */
     function config($stateProvider: ng.ui.IStateProvider): void {
         $stateProvider.state('pots', {
-            url: '/pots',
+            url: '/pots?search',
             templateUrl: 'pots.tpl.html',
             controller: 'PotsController',
             controllerAs: 'pots',

@@ -2,17 +2,20 @@
     <md-toolbar class="md-default-theme" layout="row">
         <h1 class="md-toolbar-tools">
             <i class="fa fa-bars" ng-click="toolbar.toggleMenu()"/>
-            <p>OpenPot</p>
-            <p>{{this.user.email}}</p>
+            <a ui-sref="home">
+                <p>OpenPot</p>
+            </a>
         </h1>
         <h1 class="md-toolbar-tools" layout="row" layout-align="end center">
             <p ng-if="!toolbar.user.email">
                 <span class="link" ng-click="toolbar.openRegistrationDialog($event)">Regisztráció</span>
                 <span class="link" ng-click="toolbar.openLoginDialog($event)">Belépés</span>
             </p>
+
             <p ng-if="!!toolbar.user.email">
                 <span>{{toolbar.user.firstName}}</span>
-                <i class="fa fa-caret-down" ng-class="{'fa-rotate-180': toolbar.dropdown}" ng-click="toolbar.toggleDropdown()"></i>
+                <i class="fa fa-caret-down" ng-class="{'fa-rotate-180': toolbar.dropdown}"
+                   ng-click="toolbar.toggleDropdown()"></i>
             </p>
         </h1>
     </md-toolbar>

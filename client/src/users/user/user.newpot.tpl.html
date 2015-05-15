@@ -5,7 +5,7 @@
     <section class="form">
         <div layout="row" class="row">
             <md-content flex="60">
-                <form name="newpotForm" novalidate>
+                <form name="newpotForm" novalidate ng-submit="$event.preventDefault()">
                     <md-input-container>
                         <label for="newName">Név</label>
                         <input id="newName" type="text" name="newName" ng-model="user.newName" required>
@@ -33,15 +33,15 @@
                         </div>
                     </md-input-container>
                     <!--<md-chips ng-model="ctrl.selectedVegetables" md-autocomplete-snap md-require-match>-->
-                        <!--<md-autocomplete-->
-                            <!--md-selected-item="ctrl.selectedItem"-->
-                            <!--md-search-text="ctrl.searchText"-->
-                            <!--md-items="item in ctrl.querySearch(ctrl.searchText)"-->
-                            <!--md-item-text="item.name"-->
-                            <!--placeholder="Search for a vegetable">-->
-                            <!--<span md-highlight-text="ctrl.searchText">{{item.name}}</span>-->
-                        <!--</md-autocomplete>-->
-                        <!--<md-chip>{{$chip.name}}</md-chip>-->
+                    <!--<md-autocomplete-->
+                    <!--md-selected-item="ctrl.selectedItem"-->
+                    <!--md-search-text="ctrl.searchText"-->
+                    <!--md-items="item in ctrl.querySearch(ctrl.searchText)"-->
+                    <!--md-item-text="item.name"-->
+                    <!--placeholder="Search for a vegetable">-->
+                    <!--<span md-highlight-text="ctrl.searchText">{{item.name}}</span>-->
+                    <!--</md-autocomplete>-->
+                    <!--<md-chip>{{$chip.name}}</md-chip>-->
                     <!--</md-chips>-->
                 </form>
                 <div class="error-container">

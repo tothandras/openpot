@@ -21,12 +21,15 @@ module op.users {
         newImage: File[];
         error: string;
 
+
+        querySearchItems: Array<string> = [];
+
         /* @ngInject */
         constructor(public $log: ng.ILogService,
                     public $state: ng.ui.IStateService,
+                    $scope: ng.IScope,
                     $stateParams: any,
                     public $mdDialog: any,
-                    md5: any,
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
                     LoginDialogService: op.login.ILoginDialogService,
@@ -57,6 +60,27 @@ module op.users {
                     }, (reason: string) => this.$state.transitionTo('home'));
                 }
             });
+
+            //uiGmapGoogleMapApi.then((maps: any) => {
+            //    var autocompleteService = new maps.places.AutocompleteService(null, {
+            //        language: 'hu',
+            //        types: ['address'],
+            //        componentRestrictions: {country: 'hu'}
+            //    });
+            //    $scope.$watch('user.newAddress', () => {
+            //        if (!angular.isDefined(this.newAddress) || this.newAddress === '') {
+            //            return;
+            //        }
+            //        autocompleteService.getPlacePredictions({
+            //            input: this.newAddress,
+            //        }, (prediction: any, status: any) => {
+            //            if (status === 'OK') {
+            //                $log.debug(prediction);
+            //                this.querySearchItems = prediction.map((p: any) => p.description);
+            //            }
+            //        });
+            //    })
+            //});
         }
 
         getPots(id: string) {
