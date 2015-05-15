@@ -31,7 +31,7 @@ module op.pots {
     describe('op.pots.state', (): void => {
         var states: ng.ui.IState[];
         var potsState: ng.ui.IState = {
-            url: '/pots',
+            url: '/pots?search',
             templateUrl: 'pots.tpl.html',
             controller: 'PotsController',
             controllerAs: 'pots'
