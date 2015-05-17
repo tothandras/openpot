@@ -8,6 +8,7 @@ module op.common {
         address: string;
         user?: IUser;
         image?: File;
+        rating: number;
 
         setPot: (pot: IPot) => void;
     }
@@ -19,7 +20,9 @@ module op.common {
         name: string;
         description: string;
         address: string;
+        amount: number;
         image: File;
+        rating: number;
 
         constructor(obj?: any) {
             this.setPot(obj)
@@ -32,7 +35,9 @@ module op.common {
             this.name = obj && obj.name;
             this.description = obj && obj.description;
             this.address = obj && obj.address;
+            this.amount = obj && obj.amount;
             this.image = obj && obj.image;
+            this.rating = obj && obj.rating || 1;
         }
     }
 

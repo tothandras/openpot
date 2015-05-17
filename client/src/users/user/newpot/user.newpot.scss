@@ -1,0 +1,19 @@
+.user .new-pot {
+    .drop-box {
+        position: relative;
+        background: #f8f8f8;
+        border: 3px dashed #dddddd;
+        height: 270px;
+        line-height: 270px;
+        text-align: center;
+        margin: 20px 0 0 30px;
+
+        &.dragover {
+            border: 3px dashed #808dd3;
+        }
+    }
+
+    .md-actions {
+        margin-top: 30px;
+    }
+}

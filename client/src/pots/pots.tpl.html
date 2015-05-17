@@ -22,8 +22,12 @@
                             <input id="name" type="text" ng-model="pots.search"/>
                         </md-input-container>
                     </form>
-                    <div class="flip" layout-padding ng-repeat="pot in pots.pots | filter:pots.search track by pot.id" flex="50">
-                        <div class="card" ng-class="{'flipped': pot.isFlipped && !!pots.user.email}" ng-click="pot.isFlipped=!pot.isFlipped">
+                    <div class="flip" layout-padding
+                         ng-repeat="pot in pots.pots | filter:pots.search track by pot.id"
+                         flex="50">
+                        <div class="card"
+                             ng-class="{'flipped': pot.isFlipped}"
+                             ng-click="pot.isFlipped = !pot.isFlipped && !!pots.user.email">
                             <div class="face front">
                                 <op-pot-bg ng-mouseenter="pots.mouseEnter(pot.id)"
                                            ng-mouseleave="pots.mouseLeave(pot.id)"

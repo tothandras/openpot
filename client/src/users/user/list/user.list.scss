@@ -1,0 +1,55 @@
+.user .list {
+    .wrapper {
+        margin: 0;
+    }
+
+    .pot {
+        position: relative;
+        height: 300px;
+
+        .image {
+            position: absolute;
+            height: 80%;
+            width: 98%;
+            left: 1%;
+            top: 1%;
+            background-size: cover;
+        }
+
+        .text {
+            position: absolute;
+            height: 20%;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            padding-left: 30px;
+            padding-right: 30px;
+            overflow: hidden;
+
+            h2 {
+                margin-top: 10px;
+                margin-bottom: 0;
+                font-size: 1.2em;
+                font-weight: 400;
+            }
+
+            p {
+                margin: 0;
+                font-size: 0.8em;
+            }
+        }
+
+        .delete-button {
+            position: absolute;
+            min-width: 30px;
+            width: 30px;
+            max-height: 30px;
+            height: 30px;
+            top: 2%;
+            right: 2%;
+            color: rgb(255, 64, 129);
+            margin: 0;
+            //background: #ffffff;
+        }
+    }
+}

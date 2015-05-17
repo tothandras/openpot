@@ -1,0 +1,37 @@
+<div class="reservations">
+    <md-content>
+        <md-list>
+            <md-divider></md-divider>
+            <md-list-item class="md-3-line" ng-repeat="pot in user.reservations track by pot.id">
+                <img ng-src="{{app.S3.cdn + pot.id}}" class="md-avatar" alt="{{pot.id}}"/>
+
+                <div class="md-list-item-text">
+                    <h3>{{pot.name}}</h3>
+                    <h4>{{pot.description}}</h4>
+
+                    <p>{{pot.address}}</p>
+                </div>
+                <div class="rate">
+                    <md-button class="md-icon-button"
+                               md-no-ink="true"
+                               ng-repeat="star in [1, 2, 3, 4, 5]"
+                               ng-init="pot.newRating = pot.rating"
+                               ng-mouseenter="pot.newRating = star"
+                               ng-mouseleave="pot.newRating = pot.rating"
+                               ng-click="user.rateReservation(pot.id, star)"
+                               aria-label="rate">
+                        <i ng-if="pot.newRating < star" class="fa fa-star-o"></i>
+                        <i ng-if="pot.newRating >= star" class="fa fa-star"></i>
+                    </md-button>
+                </div>
+                <md-button class="md-icon-button"
+                           md-no-ink="true"
+                           ng-click="user.deleteReservation(pot.id, $event)"
+                           aria-label="delete">
+                    <i class="fa fa-times"></i>
+                </md-button>
+            </md-list-item>
+            <md-divider></md-divider>
+        </md-list>
+    </md-content>
+</div>

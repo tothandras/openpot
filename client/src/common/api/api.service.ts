@@ -5,8 +5,11 @@ module op.common {
         getUserData: (id: string) => ng.IPromise<IUser>;
         getPots: () => ng.IPromise<IPot[]>;
         getUserPots: (id: string) => ng.IPromise<IPot[]>;
+        getUserReservations: (id: string) => ng.IPromise<IPot[]>;
         createPot: (pot: IPot) => ng.IPromise<string>;
         deletePot: (id: string) => ng.IPromise<string>;
+        reservePot: (id: string) => ng.IPromise<string>;
+        ratePot: (id: string, stars: number) => ng.IPromise<string>;
     }
 
     class APIService implements IAPIService {
@@ -89,6 +92,30 @@ module op.common {
             return deferred.promise;
         }
 
+        getUserReservations(id: string): ng.IPromise<op.common.IPot[]> {
+            var deferred: ng.IDeferred<IPot[]> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'GET',
+                url: this.API_URL + '/reservations'
+            };
+            this.$http(requestConfig)
+                .success((response: any) => {
+                    var pots: IPot[] = [];
+                    if (angular.isArray(response)) {
+                        response.forEach((p: any) => {
+                            var pot = new Pot(p);
+                            pots.push(pot);
+                        });
+                        deferred.resolve(pots);
+                    }
+                    deferred.reject('Response is not an array');
+                })
+                .error((response: string) => deferred.reject(response));
+
+            return deferred.promise;
+        }
+
         createPot(pot: IPot): ng.IPromise<string> {
             var deferred: ng.IDeferred<string> = this.$q.defer();
 
@@ -146,6 +173,37 @@ module op.common {
 
         upload(image: File): ng.IPromise<string> {
             var deferred: ng.IDeferred<string> = this.$q.defer();
+            return deferred.promise;
+        }
+
+        reservePot(id: string): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'POST',
+                url: this.API_URL + '/pot',
+                data: new op.common.Pot({id: id})
+            };
+            this.$http(requestConfig)
+                .success((response: string) => deferred.resolve(response))
+                .error((reason: string) => deferred.reject(reason));
+
+            return deferred.promise;
+        }
+
+
+        ratePot(id: string, stars: number): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'POST',
+                url: this.API_URL + '/reservations',
+                data: new op.common.Pot({id: id, rating: stars})
+            };
+            this.$http(requestConfig)
+                .success((response: string) => deferred.resolve(response))
+                .error((reason: string) => deferred.reject(reason));
+
             return deferred.promise;
         }
     }

@@ -5,22 +5,26 @@ module op.users {
         myUser: boolean;
         data: op.common.IUser;
         pots: op.common.IPot[];
+        reservations: op.common.IPot[];
         deletePot: (id: string, $event: ng.IAngularEvent) => void;
         newPot: () => void;
+        deleteReservation: (id: string, $event: ng.IAngularEvent) => void;
+        rateReservation: (id: string, stars: number) => void;
     }
 
     class UserController implements IUserScope {
         name: string = 'User Controller';
         data: op.common.IUser;
         pots: op.common.IPot[];
+        reservations: op.common.IPot[];
         myUser: boolean;
 
         newName: string;
         newDescription: string;
         newAddress: string;
+        newAmount: number;
         newImage: File[];
         error: string;
-
 
         querySearchItems: Array<string> = [];
 
@@ -33,7 +37,7 @@ module op.users {
                     SessionService: op.common.ISessionService,
                     public APIService: op.common.IAPIService,
                     LoginDialogService: op.login.ILoginDialogService,
-                    GravatarService: op.common.GravatarService,
+                    public GravatarService: op.common.GravatarService,
                     public S3: op.common.S3) {
 
             var id: string = $stateParams.id;
@@ -42,21 +46,15 @@ module op.users {
 
                 if (this.myUser) {
                     SessionService.getUser().then((user: op.common.IUser) => {
-                        this.data = user;
-                        this.data.image = GravatarService.gravatar(this.data.email);
-                        this.getPots(this.data.id);
+                        this.getUserData(user);
                     });
 
                     if (!SessionService.loggedIn()) {
-                        LoginDialogService.showDialog(null).then((p: ng.IPromise<string>) => {
-                            $state.transitionTo('home');
-                        });
+                        $state.transitionTo('home');
                     }
                 } else {
                     APIService.getUserData(id).then((user: op.common.IUser) => {
-                        this.data = user;
-                        this.data.image = GravatarService.gravatar(this.data.email);
-                        this.getPots(this.data.id);
+                        this.getUserData(user);
                     }, (reason: string) => this.$state.transitionTo('home'));
                 }
             });
@@ -83,9 +81,15 @@ module op.users {
             //});
         }
 
-        getPots(id: string) {
-            this.APIService.getUserPots(id).then((pots: op.common.Pot[]) => {
+        getPots() {
+            this.APIService.getUserPots(this.data.id).then((pots: op.common.Pot[]) => {
                 this.pots = pots;
+            });
+        }
+
+        getReservations() {
+            this.APIService.getUserReservations(this.data.id).then((pots: op.common.Pot[]) => {
+                this.reservations = pots;
             });
         }
 
@@ -95,7 +99,7 @@ module op.users {
 
         goToList(): void {
             this.$state.transitionTo('user.list');
-            this.getPots(this.data.id);
+            this.getPots();
         }
 
         newPot(): void {
@@ -103,16 +107,24 @@ module op.users {
                 name: this.newName,
                 description: this.newDescription,
                 address: this.newAddress,
+                amount: this.newAmount,
                 image: this.newImage[0]
             });
             this.APIService.createPot(pot).then((response: string) => {
                 this.$state.transitionTo('user.list');
-                this.getPots(this.data.id);
+                this.getPots();
 
                 this.newName = '';
                 this.newDescription = '';
                 this.newAddress = '';
                 this.newImage = null;
+            }, (reject: string) => {
+                this.$mdDialog.show(
+                    this.$mdDialog.alert()
+                        .title('Hiba')
+                        .content('Hibás vagy hiányzó adatok. Próbáld újra!')
+                        .ok('Rendben')
+                );
             });
         }
 
@@ -142,6 +154,28 @@ module op.users {
         fileDropped($files: Array<File>, $event: ng.IAngularEvent, $rejectedFiles: Array<File>): void {
             this.$log.debug($files);
             this.$log.debug($rejectedFiles);
+        }
+
+        getUserData(user: op.common.IUser) {
+            this.data = user;
+            this.data.image = this.GravatarService.gravatar(this.data.email);
+            this.getPots();
+            this.getReservations();
+        }
+
+        deleteReservation(id: string, $event: ng.IAngularEvent): void {
+        }
+
+        rateReservation(id: string, stars: number): void {
+            if (stars > 0 && stars <= 5) {
+                this.APIService.ratePot(id, stars).then((response: string) => {
+                    for (var i = 0; i < this.reservations.length; i++) {
+                        if (this.reservations[i].id === id) {
+                            this.reservations[i].rating = stars;
+                        }
+                    }
+                })
+            }
         }
     }
 

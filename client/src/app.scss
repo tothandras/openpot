@@ -12,9 +12,12 @@ html, body, .main-content {
 }
 
 .content {
+    position: absolute;
+    top: 64px;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: block;
-    height: 100%;
-    padding-top: 64px;
 }
 
 .circle {
@@ -25,5 +28,9 @@ html, body, .main-content {
 .responsive-image {
     max-width: 100%;
     height: auto;
+}
+
+[ng-click] {
+    outline: none;
 }
 

@@ -71,7 +71,7 @@ config.port = '8030';
 
 /** tasks */
 gulp.task('clean', function () {
-    p.del(config.paths.build, function (err) {
+    p.del(config.paths.build, {force: true}, function (err) {
         if (err != null) {
             p.util.log(err);
         }
@@ -221,7 +221,7 @@ gulp.task('min-image', function () {
     return gulp.src(config.files.image)
         .pipe(p.plumber())
         .pipe(p.flatten())
-        //.pipe(p.imagemin({progressive: true}))
+        .pipe(p.imagemin({progressive: true}))
         .pipe(gulp.dest(config.paths.image, {cwd: config.paths.build}))
         .pipe(reload({stream: true}));
 });

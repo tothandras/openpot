@@ -72,7 +72,9 @@ type Pot struct {
 	Consumers   []bson.ObjectId `json:"consumer" bson:"consumer"`
 	Name        string          `json:"name" bson:"name"`
 	Description string          `json:"description" bson:"description"`
-	Address     string          `json:"address" bson"address"`
+	Address     string          `json:"address" bson:"address"`
+	Amout       int32           `json:"amount" bson:"amount"`
+  Rating      int32           `json:"rating" bson:"rating"`
 }
 
 //type Message struct {
@@ -283,6 +285,47 @@ func GETUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	return
 }
 
+func GETReservations(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	user, err := verify(r)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	id := user.ID
+	pots := make([]Pot, 0)
+	err = potCollection.Find(bson.M{"consumer": id}).All(&pots)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "User not found")
+		return
+	}
+
+	b, err := json.Marshal(pots)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Print(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, string(b))
+}
+
+// TODO
+func POSTReservations(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+//  user, err := verify(r)
+//
+//  if err != nil {
+//    w.WriteHeader(http.StatusUnauthorized)
+//    return
+//  }
+
+  w.WriteHeader(http.StatusOK)
+}
+
 func POSTUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	id := bson.ObjectIdHex(p.ByName("id"))
 
@@ -411,19 +454,21 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-  if pot.ID != "" {
-    err = potCollection.UpdateId(pot.ID, pot);
-    if err != nil {
-      w.WriteHeader(http.StatusInternalServerError)
-      log.Print(err)
-      return
-    }
+	// reserve
+	if pot.ID != "" {
+		err = potCollection.Update(bson.M{"_id": pot.ID, "amount": bson.M{"$gt": 0}}, bson.M{"$addToSet": bson.M{"consumer": user.ID}, "$inc": bson.M{"amount": -1}})
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			log.Print(err)
+			return
+		}
 
-    w.WriteHeader(http.StatusOK)
-    return
-  }
+		w.WriteHeader(http.StatusOK)
+		return
+	}
 
-	if pot.Name == "" || pot.Description == "" || pot.Address == "" {
+	// new
+	if pot.Name == "" || pot.Description == "" || pot.Address == "" || pot.Amout < 1 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "Required fields missing")
 		return
@@ -432,6 +477,7 @@ func POSTPot(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	id := bson.NewObjectId()
 	pot.ID = id
+  pot.Rating = 1;
 	err = potCollection.Insert(pot)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -493,7 +539,7 @@ func GETS3Policy(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func handleFiles(w http.ResponseWriter, r *http.Request) {
 	box := rice.MustFindBox("static")
-  url := r.URL.Path
+	url := r.URL.Path
 	if strings.Contains(url, ".") {
 		url = "/"
 	}
@@ -531,6 +577,8 @@ func main() {
 	router.GET("/api/user", GETUser)
 	router.GET("/api/user/:id", GETUser)
 	router.POST("/api/user/:id", POSTUser)
+	router.GET("/api/reservations", GETReservations)
+  router.POST("/api/reservations", POSTReservations)
 
 	router.GET("/api/user/:id/pot", GETPot)
 	router.GET("/api/pot", GETPot)

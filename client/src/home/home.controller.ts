@@ -9,7 +9,7 @@ module op.home {
     class HomeController implements IHomeScope {
         name: string = 'Home Controller';
         searchText: string;
-        //selectedItem: string;
+        selectedItem: string;
         querySearchItems: Array<string> = [];
 
         /* @ngInject */

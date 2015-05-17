@@ -32,6 +32,15 @@
                             <div ng-message="required">Kötelező megadni!</div>
                         </div>
                     </md-input-container>
+                    <md-input-container>
+                        <label for="newAmount">Adagok száma</label>
+                        <input id="newAmount" type="number" name="newAmount" ng-model="user.newAmount" min="0" step="1" pattern="\d*" required>
+
+                        <div ng-messages="newpotForm.newAmount.$error" ng-show="newpotForm.newAmount.$dirty">
+                            <div ng-message="required">Kötelező megadni!</div>
+                            <div ng-message="pattern">Csak egész szám lehet!</div>
+                        </div>
+                    </md-input-container>
                     <!--<md-chips ng-model="ctrl.selectedVegetables" md-autocomplete-snap md-require-match>-->
                     <!--<md-autocomplete-->
                     <!--md-selected-item="ctrl.selectedItem"-->

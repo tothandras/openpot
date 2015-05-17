@@ -7,6 +7,7 @@ module op.toolbar {
         openRegistrationDialog: ($event: ng.IAngularEvent) => void;
         goToUser: () => void;
         newPot: () => void;
+        goToReservations: () => void;
         logout: () => void;
     }
 
@@ -17,6 +18,7 @@ module op.toolbar {
 
         /* @ngInject */
         constructor(public $log: ng.ILogService,
+                    $rootScope: ng.IRootScopeService,
                     public $mdSidenav: any,
                     public $state: ng.ui.IStateService,
                     public LoginDialogService: op.login.ILoginDialogService,
@@ -24,6 +26,10 @@ module op.toolbar {
                     public SessionService: op.common.ISessionService) {
             SessionService.getUser().then((user: op.common.IUser) => {
                 this.user = user;
+            });
+
+            $rootScope.$on('$stateChangeStart', () => {
+                this.dropdown = false;
             });
         }
 
@@ -40,12 +46,10 @@ module op.toolbar {
         }
 
         goToUser(): void {
-            this.dropdown = false;
             this.$state.transitionTo('user.list');
         }
 
         newPot(): void {
-            this.dropdown = false;
             this.$state.transitionTo('user.newpot');
         }
 
@@ -56,6 +60,11 @@ module op.toolbar {
 
         toggleDropdown(): void {
             this.dropdown = !this.dropdown;
+        }
+
+
+        goToReservations(): void {
+            this.$state.transitionTo('user.reservations');
         }
     }
 

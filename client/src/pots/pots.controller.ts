@@ -28,9 +28,9 @@ module op.pots {
         user: op.common.IUser;
 
         /* @ngInject */
-        constructor($log: ng.ILogService,
+        constructor(public $log: ng.ILogService,
                     $stateParams: StateParams,
-                    APIService: op.common.IAPIService,
+                    public APIService: op.common.IAPIService,
                     LocationService: op.common.ILocationService,
                     SessionService: op.common.ISessionService,
                     uiGmapGoogleMapApi: any) {
@@ -59,6 +59,7 @@ module op.pots {
             });
 
             APIService.getPots().then((pots: op.common.IPot[]) => {
+                pots = pots.filter((pot: op.common.IPot) => pot.cook != this.user.id);
                 if ($stateParams.search && $stateParams.search !== '') {
                     pots = pots.filter((pot: op.common.IPot) => pot.address.indexOf($stateParams.search) > -1);
                     LocationService.geocode($stateParams.search).then((location: op.common.Location) => {
@@ -91,7 +92,11 @@ module op.pots {
 
 
         reserve(id: string): void {
-
+            this.APIService.reservePot(id).then((response: string) => {
+                this.$log.debug(response);
+            }, (reason: string) => {
+                this.$log.debug(reason);
+            });
         }
     }
 
