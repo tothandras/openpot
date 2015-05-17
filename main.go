@@ -285,7 +285,7 @@ func GETUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	return
 }
 
-func GETReservations(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+func GETReservation(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	user, err := verify(r)
 
 	if err != nil {
@@ -314,14 +314,64 @@ func GETReservations(w http.ResponseWriter, r *http.Request, p httprouter.Params
 	fmt.Fprintf(w, string(b))
 }
 
-// TODO
-func POSTReservations(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-//  user, err := verify(r)
-//
-//  if err != nil {
-//    w.WriteHeader(http.StatusUnauthorized)
-//    return
-//  }
+func POSTReservation(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  user, err := verify(r)
+
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  body, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    return
+  }
+
+  pot := Pot{}
+  err = json.Unmarshal(body, &pot)
+  if err != nil || pot.Rating < 1 || pot.Rating > 5 {
+    w.WriteHeader(http.StatusBadRequest)
+    fmt.Fprintf(w, "Incorrect pot object")
+    return
+  }
+
+  err = potCollection.Update(bson.M{"_id": pot.ID, "consumer": user.ID}, bson.M{"$set": bson.M{"rating": pot.Rating}})
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  w.WriteHeader(http.StatusOK)
+}
+
+func DELETEReservation(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+  user, err := verify(r)
+
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
+
+  body, err := ioutil.ReadAll(r.Body)
+  if err != nil {
+    w.WriteHeader(http.StatusInternalServerError)
+    return
+  }
+
+  pot := Pot{}
+  err = json.Unmarshal(body, &pot)
+  if err != nil {
+    w.WriteHeader(http.StatusBadRequest)
+    fmt.Fprintf(w, "Incorrect pot object")
+    return
+  }
+
+  err = potCollection.Update(bson.M{"_id": pot.ID, "consumer": user.ID}, bson.M{"$pull": bson.M{"consumer": user.ID}})
+  if err != nil {
+    w.WriteHeader(http.StatusUnauthorized)
+    return
+  }
 
   w.WriteHeader(http.StatusOK)
 }
@@ -577,8 +627,9 @@ func main() {
 	router.GET("/api/user", GETUser)
 	router.GET("/api/user/:id", GETUser)
 	router.POST("/api/user/:id", POSTUser)
-	router.GET("/api/reservations", GETReservations)
-  router.POST("/api/reservations", POSTReservations)
+	router.GET("/api/reservation", GETReservation)
+  router.POST("/api/reservation", POSTReservation)
+  router.DELETE("/api/reservation", DELETEReservation)
 
 	router.GET("/api/user/:id/pot", GETPot)
 	router.GET("/api/pot", GETPot)

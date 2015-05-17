@@ -34,3 +34,10 @@ html, body, .main-content {
     outline: none;
 }
 
+md-dialog {
+    md-content {
+        padding-right: 5%;
+        padding-left: 5%;
+    }
+}
+

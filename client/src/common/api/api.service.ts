@@ -9,7 +9,8 @@ module op.common {
         createPot: (pot: IPot) => ng.IPromise<string>;
         deletePot: (id: string) => ng.IPromise<string>;
         reservePot: (id: string) => ng.IPromise<string>;
-        ratePot: (id: string, stars: number) => ng.IPromise<string>;
+        rateReservation: (id: string, stars: number) => ng.IPromise<string>;
+        deleteReservation: (id: string) => ng.IPromise<string>;
     }
 
     class APIService implements IAPIService {
@@ -97,7 +98,7 @@ module op.common {
 
             var requestConfig: ng.IRequestConfig = {
                 method: 'GET',
-                url: this.API_URL + '/reservations'
+                url: this.API_URL + '/reservation'
             };
             this.$http(requestConfig)
                 .success((response: any) => {
@@ -192,13 +193,44 @@ module op.common {
         }
 
 
+        rateReservation(id: string, stars: number): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'POST',
+                url: this.API_URL + '/reservation',
+                data: new op.common.Pot({id: id, rating: stars})
+            };
+            this.$http(requestConfig)
+                .success((response: string) => deferred.resolve(response))
+                .error((reason: string) => deferred.reject(reason));
+
+            return deferred.promise;
+        }
+
+
         ratePot(id: string, stars: number): ng.IPromise<string> {
             var deferred: ng.IDeferred<string> = this.$q.defer();
 
             var requestConfig: ng.IRequestConfig = {
                 method: 'POST',
-                url: this.API_URL + '/reservations',
+                url: this.API_URL + '/reservation',
                 data: new op.common.Pot({id: id, rating: stars})
+            };
+            this.$http(requestConfig)
+                .success((response: string) => deferred.resolve(response))
+                .error((reason: string) => deferred.reject(reason));
+
+            return deferred.promise;
+        }
+
+        deleteReservation(id: string): ng.IPromise<string> {
+            var deferred: ng.IDeferred<string> = this.$q.defer();
+
+            var requestConfig: ng.IRequestConfig = {
+                method: 'DELETE',
+                url: this.API_URL + '/reservation',
+                data: new op.common.Pot({id: id})
             };
             this.$http(requestConfig)
                 .success((response: string) => deferred.resolve(response))

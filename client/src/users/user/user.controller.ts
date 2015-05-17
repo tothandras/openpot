@@ -164,11 +164,30 @@ module op.users {
         }
 
         deleteReservation(id: string, $event: ng.IAngularEvent): void {
+            this.$mdDialog.show(
+                this.$mdDialog.confirm()
+                    .title('Törlés')
+                    .content('Biztosan törölni szeretné?')
+                    .ok('Igen')
+                    .cancel('Mégse')
+                    .targetEvent($event)
+            )
+                .then(() => {
+                    this.APIService.deleteReservation(id).then(() => {
+                        for (var i = 0; i < this.reservations.length; i++) {
+                            if (this.reservations[i].id === id) {
+                                this.reservations.splice(i, 1);
+                            }
+                        }
+                    }, (reason: string) => {
+                        this.$log.debug(reason)
+                    })
+                });
         }
 
         rateReservation(id: string, stars: number): void {
             if (stars > 0 && stars <= 5) {
-                this.APIService.ratePot(id, stars).then((response: string) => {
+                this.APIService.rateReservation(id, stars).then((response: string) => {
                     for (var i = 0; i < this.reservations.length; i++) {
                         if (this.reservations[i].id === id) {
                             this.reservations[i].rating = stars;
