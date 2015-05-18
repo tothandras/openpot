@@ -30,8 +30,8 @@ RUN mkdir /keys -p
 RUN openssl genrsa -out /keys/app.rsa 1024
 RUN openssl rsa -pubout -in /keys/app.rsa -out /keys/app.rsa.pub
 
-#ENV AWS_ACCESS_KEY_ID AKIAJ7OGLEBV27YXMYHQ
-#ENV AWS_SECRET_ACCESS_KEY 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
+#ENV AWS_ACCESS_KEY_ID xxx
+#ENV AWS_SECRET_ACCESS_KEY yyy
 
 ENTRYPOINT openpot -port=8080 -db=172.17.0.70
 EXPOSE 8080
