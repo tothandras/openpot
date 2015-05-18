@@ -11,9 +11,10 @@ Invoke Docker from the package directory to build an image using the Dockerfile:
 
 `$ docker build -t openpot .`
 
-Run a container:
+Run the containers:
 
-`$ docker run --publish 8080:8080 --name openpotapp --rm openpot`
+
+`$ docker run --publish 8080:8080 --name openpotapp --rm openpot -e AWS_ACCESS_KEY_ID=XXX AWS_SECRET_ACCESS_KEY=YYY`
 
 ### Development
 
