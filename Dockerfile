@@ -3,14 +3,15 @@ MAINTAINER Andras Toth <andras.toth93@gmail.com>
 
 RUN yum update -y
 RUN yum install -y curl tar git hg gcc libc6-dev make openssl
-RUN curl -sL https://rpm.nodesource.com/setup | bash -
-RUN yum install -y nodejs
-RUN npm install -g gulp bower
+#RUN yum install -y epel-release
+#RUN yum install -y nodejs npm
+#RUN npm install -g npm
+#RUN npm install -g gulp bower
 
 ENV GOLANG_VERSION 1.4.2
 
 RUN curl -sSL https://golang.org/dl/go$GOLANG_VERSION.src.tar.gz \
-		| tar -v -C /usr/src -xz
+                | tar -v -C /usr/src -xz
 
 RUN cd /usr/src/go/src && ./make.bash --no-clean 2>&1
 
@@ -23,10 +24,7 @@ ENV PATH $PATH:$GOROOT/bin:$GOPATH/bin
 ADD . /go/src/github.com/tothandras/openpot
 RUN go get -v -d all
 RUN go install github.com/tothandras/openpot
-RUN cd /go/src/github.com/tothandras/openpot
-        && npm install
-        && bower install
-        && gulp --release
+#RUN cd /go/src/github.com/tothandras/openpot && npm install && bower install && gulp --release
 
 RUN mkdir /keys -p
 RUN openssl genrsa -out /keys/app.rsa 1024
